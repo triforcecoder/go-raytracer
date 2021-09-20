@@ -1,21 +1,35 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	proj := Projectile{createPoint(0, 1, 0), createVector(1, 1, 0).normalize()}
-	env := Environment{createVector(0, -0.1, 0), createVector(-0.01, 0, 0)}
+	start := createPoint(0, 1, 0)
+	velocity := createVector(1, 1.8, 0).normalize().multiply(11.25)
+	proj := Projectile{start, velocity}
+
+	gravity := createVector(0, -0.1, 0)
+	wind := createVector(-0.01, 0, 0)
+	env := Environment{gravity, wind}
+
+	width := 900
+	height := 550
+	canvas := createCanvas(width, height)
+
 	ticks := 0
 
-	fmt.Println("projectile position = ", proj.position)
-
 	for proj.position.y > 0 {
+		fmt.Println("projectile position = ", proj.position)
+		canvas.writePixel(int(proj.position.x), height-int(proj.position.y), Color{1, 0, 0})
+
 		proj = tick(env, proj)
 		ticks++
-		fmt.Println("projectile position = ", proj.position)
 	}
 
 	fmt.Println(ticks, " ticks to hit the ground")
+	os.WriteFile("canvas.ppm", []byte(canvas.toPPM()), 0666)
 }
 
 type Projectile struct {
