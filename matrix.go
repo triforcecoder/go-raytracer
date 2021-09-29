@@ -128,6 +128,24 @@ func (matrix Matrix) invertible() bool {
 	return matrix.determinant() != 0
 }
 
+func (matrix Matrix) inverse() Matrix {
+	if !matrix.invertible() {
+		panic("precondition - matrix is not invertible")
+	}
+
+	result := createMatrix(len(matrix), len(matrix[0]))
+	determinant := matrix.determinant()
+
+	for row := range matrix {
+		for col := range matrix[0] {
+			cofactor := matrix.cofactor(row, col)
+			result[col][row] = cofactor / determinant
+		}
+	}
+
+	return result
+}
+
 func createMatrix(rows, cols int) Matrix {
 	matrix := make(Matrix, rows)
 	for i := range matrix {
