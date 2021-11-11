@@ -1,10 +1,22 @@
 package main
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func EqualTuple(t *testing.T, expected Tuple, actual Tuple) {
+	if equal(expected.x, actual.x) &&
+		equal(expected.y, actual.y) &&
+		equal(expected.z, actual.z) &&
+		equal(expected.w, actual.w) {
+		assert.True(t, true)
+	} else {
+		assert.Equal(t, expected, actual)
+	}
+}
 
 func TestCreate2x2Matrix(t *testing.T) {
 	matrix := Matrix{
@@ -312,4 +324,177 @@ func TestMultiplyProductByInverse(t *testing.T) {
 	result := matrix1.multiply(matrix2)
 
 	assert.True(t, matrix1.equals(result.multiply(matrix2.inverse())))
+}
+
+func TestMultiplyByTranslationMatrix(t *testing.T) {
+	matrix := createTranslationMatrix(5, -3, 2)
+	point := createPoint(-3, 4, 5)
+
+	result := createPoint(2, 1, 7)
+
+	assert.Equal(t, result, matrix.multiplyTuple(point))
+}
+
+func TestMultiplyInverseByTranslationMatrix(t *testing.T) {
+	matrix := createTranslationMatrix(5, -3, 2).inverse()
+	point := createPoint(-3, 4, 5)
+
+	result := createPoint(-8, 7, 3)
+
+	assert.Equal(t, result, matrix.multiplyTuple(point))
+}
+
+func TestTranslationDoesNotAffectVectors(t *testing.T) {
+	matrix := createTranslationMatrix(5, -3, 2)
+	vector := createVector(-3, 4, 5)
+
+	assert.Equal(t, vector, matrix.multiplyTuple(vector))
+}
+
+func TestMultiplyByScalingMatrix(t *testing.T) {
+	matrix := createScalingMatrix(2, 3, 4)
+	point := createPoint(-4, 6, 8)
+
+	result := createPoint(-8, 18, 32)
+
+	assert.Equal(t, result, matrix.multiplyTuple(point))
+}
+
+func TestMultiplyInverseByScalingMatrix(t *testing.T) {
+	matrix := createScalingMatrix(2, 3, 4).inverse()
+	point := createPoint(-4, 6, 8)
+
+	result := createPoint(-2, 2, 2)
+
+	assert.Equal(t, result, matrix.multiplyTuple(point))
+}
+
+func TestScalingDoesNotAffectVectors(t *testing.T) {
+	matrix := createScalingMatrix(2, 3, 4)
+	vector := createVector(-4, 6, 8)
+
+	result := createVector(-8, 18, 32)
+
+	assert.Equal(t, result, matrix.multiplyTuple(vector))
+}
+
+func TestRotatePointXAxis(t *testing.T) {
+	point := createPoint(0, 1, 0)
+	halfQuarter := rotationX(math.Pi / 4)
+	fullQuarter := rotationX(math.Pi / 2)
+
+	result1 := createPoint(0, math.Sqrt2/2, math.Sqrt2/2)
+	result2 := createPoint(0, 0, 1)
+
+	EqualTuple(t, result1, halfQuarter.multiplyTuple(point))
+	EqualTuple(t, result2, fullQuarter.multiplyTuple(point))
+}
+
+func TestInverseRotatePointXAxis(t *testing.T) {
+	point := createPoint(0, 1, 0)
+	halfQuarter := rotationX(math.Pi / 4)
+	inv := halfQuarter.inverse()
+
+	result := createPoint(0, math.Sqrt2/2, -math.Sqrt2/2)
+
+	EqualTuple(t, result, inv.multiplyTuple(point))
+}
+
+func TestRotatePointYAxis(t *testing.T) {
+	point := createPoint(0, 0, 1)
+	halfQuarter := rotationY(math.Pi / 4)
+	fullQuarter := rotationY(math.Pi / 2)
+
+	result1 := createPoint(math.Sqrt2/2, 0, math.Sqrt2/2)
+	result2 := createPoint(1, 0, 0)
+
+	EqualTuple(t, result1, halfQuarter.multiplyTuple(point))
+	EqualTuple(t, result2, fullQuarter.multiplyTuple(point))
+}
+
+func TestRotatePointZAxis(t *testing.T) {
+	point := createPoint(0, 1, 0)
+	halfQuarter := rotationZ(math.Pi / 4)
+	fullQuarter := rotationZ(math.Pi / 2)
+
+	result1 := createPoint(-math.Sqrt2/2, math.Sqrt2/2, 0)
+	result2 := createPoint(-1, 0, 0)
+
+	EqualTuple(t, result1, halfQuarter.multiplyTuple(point))
+	EqualTuple(t, result2, fullQuarter.multiplyTuple(point))
+}
+
+func TestShearingXtoZ(t *testing.T) {
+	transform := shearing(0, 1, 0, 0, 0, 0)
+	point := createPoint(2, 3, 4)
+
+	result := createPoint(6, 3, 4)
+
+	EqualTuple(t, result, transform.multiplyTuple(point))
+}
+
+func TestShearingYtoX(t *testing.T) {
+	transform := shearing(0, 0, 1, 0, 0, 0)
+	point := createPoint(2, 3, 4)
+
+	result := createPoint(2, 5, 4)
+
+	EqualTuple(t, result, transform.multiplyTuple(point))
+}
+
+func TestShearingYtoZ(t *testing.T) {
+	transform := shearing(0, 0, 0, 1, 0, 0)
+	point := createPoint(2, 3, 4)
+
+	result := createPoint(2, 7, 4)
+
+	EqualTuple(t, result, transform.multiplyTuple(point))
+}
+
+func TestShearingZtoX(t *testing.T) {
+	transform := shearing(0, 0, 0, 0, 1, 0)
+	point := createPoint(2, 3, 4)
+
+	result := createPoint(2, 3, 6)
+
+	EqualTuple(t, result, transform.multiplyTuple(point))
+}
+
+func TestShearingZtoY(t *testing.T) {
+	transform := shearing(0, 0, 0, 0, 0, 1)
+	point := createPoint(2, 3, 4)
+
+	result := createPoint(2, 3, 7)
+
+	EqualTuple(t, result, transform.multiplyTuple(point))
+}
+
+func TestIndividualTransformationsInSequence(t *testing.T) {
+	point := createPoint(1, 0, 1)
+	a := rotationX(math.Pi / 2)
+	b := createScalingMatrix(5, 5, 5)
+	c := createTranslationMatrix(10, 5, 7)
+
+	// rotation
+	point2 := a.multiplyTuple(point)
+	EqualTuple(t, createPoint(1, -1, 0), point2)
+
+	// scaling
+	point3 := b.multiplyTuple(point2)
+	EqualTuple(t, createPoint(5, -5, 0), point3)
+
+	// translation
+	point4 := c.multiplyTuple(point3)
+	EqualTuple(t, createPoint(15, 0, 7), point4)
+}
+
+func TestChainedTransformationsInReverseOrder(t *testing.T) {
+	point := createPoint(1, 0, 1)
+	a := rotationX(math.Pi / 2)
+	b := createScalingMatrix(5, 5, 5)
+	c := createTranslationMatrix(10, 5, 7)
+
+	result := c.multiply(b).multiply(a)
+
+	EqualTuple(t, createPoint(15, 0, 7), result.multiplyTuple(point))
 }
