@@ -11,11 +11,20 @@ type Canvas struct {
 	pixel  [][]Color
 }
 
-func (canvas Canvas) writePixel(x, y int, color Color) {
+func NewCanvas(width, height int) Canvas {
+	pixel := make([][]Color, width)
+	for i := range pixel {
+		pixel[i] = make([]Color, height)
+	}
+
+	return Canvas{width, height, pixel}
+}
+
+func (canvas Canvas) WritePixel(x, y int, color Color) {
 	canvas.pixel[x][y] = color
 }
 
-func (canvas Canvas) toPPM() string {
+func (canvas Canvas) ToPPM() string {
 	const maxCharPerLine = 70
 	const maxCharPixel = 5
 
@@ -51,11 +60,13 @@ func (canvas Canvas) toPPM() string {
 	return header + data
 }
 
-func createCanvas(width, height int) Canvas {
-	pixel := make([][]Color, width)
-	for i := range pixel {
-		pixel[i] = make([]Color, height)
+// scale from float 0:1 to int 0:255
+func scaleFloat(x float64) int {
+	if x <= 0 {
+		return 0
+	} else if x >= 1 {
+		return 255
+	} else {
+		return int(x * 256)
 	}
-
-	return Canvas{width, height, pixel}
 }

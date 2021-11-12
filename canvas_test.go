@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateCanvas(t *testing.T) {
-	canvas := createCanvas(10, 20)
+func TestNewCanvas(t *testing.T) {
+	canvas := NewCanvas(10, 20)
 
 	assert.Equal(t, 10, canvas.width)
 	assert.Equal(t, 20, canvas.height)
@@ -23,16 +23,16 @@ func TestCreateCanvas(t *testing.T) {
 }
 
 func TestWritePixel(t *testing.T) {
-	canvas := createCanvas(10, 20)
+	canvas := NewCanvas(10, 20)
 	red := Color{1, 0, 0}
-	canvas.writePixel(2, 3, red)
+	canvas.WritePixel(2, 3, red)
 
 	assert.Equal(t, red, canvas.pixel[2][3])
 }
 
 func TestHeaderToPPM(t *testing.T) {
-	canvas := createCanvas(5, 3)
-	ppm := canvas.toPPM()
+	canvas := NewCanvas(5, 3)
+	ppm := canvas.ToPPM()
 
 	result := strings.Split(ppm, "\n")
 
@@ -42,16 +42,16 @@ func TestHeaderToPPM(t *testing.T) {
 }
 
 func TestPixelDataToPPM(t *testing.T) {
-	canvas := createCanvas(5, 3)
+	canvas := NewCanvas(5, 3)
 	color1 := Color{1.5, 0, 0}
 	color2 := Color{0, 0.5, 0}
 	color3 := Color{-0.5, 0, 1}
 
-	canvas.writePixel(0, 0, color1)
-	canvas.writePixel(2, 1, color2)
-	canvas.writePixel(4, 2, color3)
+	canvas.WritePixel(0, 0, color1)
+	canvas.WritePixel(2, 1, color2)
+	canvas.WritePixel(4, 2, color3)
 
-	ppm := canvas.toPPM()
+	ppm := canvas.ToPPM()
 
 	result := strings.Split(ppm, "\n")
 
@@ -61,15 +61,15 @@ func TestPixelDataToPPM(t *testing.T) {
 }
 
 func TestSplitLongLinesToPPM(t *testing.T) {
-	canvas := createCanvas(10, 2)
+	canvas := NewCanvas(10, 2)
 
 	for j := 0; j < canvas.height; j++ {
 		for i := 0; i < canvas.width; i++ {
-			canvas.writePixel(i, j, Color{1, 0.8, 0.6})
+			canvas.WritePixel(i, j, Color{1, 0.8, 0.6})
 		}
 	}
 
-	ppm := canvas.toPPM()
+	ppm := canvas.ToPPM()
 
 	result := strings.Split(ppm, "\n")
 
@@ -80,9 +80,18 @@ func TestSplitLongLinesToPPM(t *testing.T) {
 }
 
 func TestEndNewlineToPPM(t *testing.T) {
-	canvas := createCanvas(5, 3)
+	canvas := NewCanvas(5, 3)
 
-	ppm := canvas.toPPM()
+	ppm := canvas.ToPPM()
 
 	assert.True(t, strings.HasSuffix(ppm, "\n"))
+}
+
+func TestScaleFloat(t *testing.T) {
+	assert.Equal(t, 0, scaleFloat(-1))
+	assert.Equal(t, 0, scaleFloat(-0.5))
+	assert.Equal(t, 0, scaleFloat(0))
+	assert.Equal(t, 255, scaleFloat(1.6))
+	assert.Equal(t, 255, scaleFloat(1))
+	assert.Equal(t, 128, scaleFloat(0.5))
 }

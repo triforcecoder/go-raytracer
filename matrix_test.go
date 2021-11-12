@@ -8,10 +8,10 @@ import (
 )
 
 func EqualTuple(t *testing.T, expected Tuple, actual Tuple) {
-	if equal(expected.x, actual.x) &&
-		equal(expected.y, actual.y) &&
-		equal(expected.z, actual.z) &&
-		equal(expected.w, actual.w) {
+	if floatEquals(expected.x, actual.x) &&
+		floatEquals(expected.y, actual.y) &&
+		floatEquals(expected.z, actual.z) &&
+		floatEquals(expected.w, actual.w) {
 		assert.True(t, true)
 	} else {
 		assert.Equal(t, expected, actual)
@@ -68,7 +68,7 @@ func TestMatrixEqual(t *testing.T) {
 		{9, 8, 7, 6},
 		{5, 4, 3, 2}}
 
-	assert.True(t, matrix1.equals(matrix2))
+	assert.True(t, matrix1.Equals(matrix2))
 }
 
 func TestMatrixNotEqual(t *testing.T) {
@@ -84,7 +84,7 @@ func TestMatrixNotEqual(t *testing.T) {
 		{8, 7, 6, 5},
 		{4, 3, 2, 1}}
 
-	assert.False(t, matrix1.equals(matrix2))
+	assert.False(t, matrix1.Equals(matrix2))
 }
 
 func TestMultiplyMatrix(t *testing.T) {
@@ -106,7 +106,7 @@ func TestMultiplyMatrix(t *testing.T) {
 		{40, 58, 110, 102},
 		{16, 26, 46, 42}}
 
-	assert.Equal(t, result, matrix1.multiply(matrix2))
+	assert.Equal(t, result, matrix1.Multiply(matrix2))
 }
 
 func TestMultiplyMatrixByTuple(t *testing.T) {
@@ -118,7 +118,7 @@ func TestMultiplyMatrixByTuple(t *testing.T) {
 	tuple := Tuple{1, 2, 3, 1}
 	result := Tuple{18, 24, 33, 1}
 
-	assert.Equal(t, result, matrix.multiplyTuple(tuple))
+	assert.Equal(t, result, matrix.MultiplyTuple(tuple))
 }
 
 func TestIdentityMatrixWithMatrix(t *testing.T) {
@@ -127,9 +127,9 @@ func TestIdentityMatrixWithMatrix(t *testing.T) {
 		{1, 2, 4, 8},
 		{2, 4, 8, 16},
 		{4, 8, 16, 32}}
-	identity := createIdentityMatrix()
+	identity := NewIdentityMatrix()
 
-	assert.Equal(t, matrix, matrix.multiply(identity))
+	assert.Equal(t, matrix, matrix.Multiply(identity))
 }
 
 func TestIdentityMatrixWithTuple(t *testing.T) {
@@ -144,20 +144,20 @@ func TestIdentityMatrixWithTuple(t *testing.T) {
 		{3, 0, 5, 5},
 		{0, 8, 3, 8}}
 
-	assert.Equal(t, result, matrix.transpose())
+	assert.Equal(t, result, matrix.Transpose())
 }
 
 func TestTransposeMatrix(t *testing.T) {
 	tuple := Tuple{1, 2, 3, 4}
-	identity := createIdentityMatrix()
+	identity := NewIdentityMatrix()
 
-	assert.Equal(t, tuple, identity.multiplyTuple(tuple))
+	assert.Equal(t, tuple, identity.MultiplyTuple(tuple))
 }
 
 func TestTransposeIdentityMatrix(t *testing.T) {
-	identity := createIdentityMatrix()
+	identity := NewIdentityMatrix()
 
-	assert.Equal(t, identity, identity.transpose())
+	assert.Equal(t, identity, identity.Transpose())
 }
 
 func TestDeterminant2x2Matrix(t *testing.T) {
@@ -165,7 +165,7 @@ func TestDeterminant2x2Matrix(t *testing.T) {
 		{1, 5},
 		{-3, 2}}
 
-	assert.Equal(t, 17.0, matrix.determinant())
+	assert.Equal(t, 17.0, matrix.Determinant())
 }
 
 func Test3x3Submatrix(t *testing.T) {
@@ -174,11 +174,11 @@ func Test3x3Submatrix(t *testing.T) {
 		{-3, 2, 7},
 		{0, 6, -3}}
 
-	submatrix := Matrix{
+	Submatrix := Matrix{
 		{-3, 2},
 		{0, 6}}
 
-	assert.Equal(t, submatrix, matrix.submatrix(0, 2))
+	assert.Equal(t, Submatrix, matrix.Submatrix(0, 2))
 }
 
 func Test4x4Submatrix(t *testing.T) {
@@ -188,12 +188,12 @@ func Test4x4Submatrix(t *testing.T) {
 		{-1, 0, 8, 2},
 		{-7, 1, -1, 1}}
 
-	submatrix := Matrix{
+	Submatrix := Matrix{
 		{-6, 1, 6},
 		{-8, 8, 6},
 		{-7, -1, 1}}
 
-	assert.Equal(t, submatrix, matrix.submatrix(2, 1))
+	assert.Equal(t, Submatrix, matrix.Submatrix(2, 1))
 }
 
 func TestMinor3x3Matrix(t *testing.T) {
@@ -202,7 +202,7 @@ func TestMinor3x3Matrix(t *testing.T) {
 		{2, -1, -7},
 		{6, -1, 5}}
 
-	assert.Equal(t, 25.0, matrix.minor(1, 0))
+	assert.Equal(t, 25.0, matrix.Minor(1, 0))
 }
 
 func TestCofactor3x3Matrix(t *testing.T) {
@@ -211,8 +211,8 @@ func TestCofactor3x3Matrix(t *testing.T) {
 		{2, -1, -7},
 		{6, -1, 5}}
 
-	assert.Equal(t, -12.0, matrix.cofactor(0, 0))
-	assert.Equal(t, -25.0, matrix.cofactor(1, 0))
+	assert.Equal(t, -12.0, matrix.Cofactor(0, 0))
+	assert.Equal(t, -25.0, matrix.Cofactor(1, 0))
 }
 
 func TestDeterminant3x3Matrix(t *testing.T) {
@@ -221,7 +221,7 @@ func TestDeterminant3x3Matrix(t *testing.T) {
 		{-5, 8, -4},
 		{2, 6, 4}}
 
-	assert.Equal(t, -196.0, matrix.determinant())
+	assert.Equal(t, -196.0, matrix.Determinant())
 }
 
 func TestDeterminant4x4Matrix(t *testing.T) {
@@ -231,7 +231,7 @@ func TestDeterminant4x4Matrix(t *testing.T) {
 		{1, 2, -9, 6},
 		{-6, 7, 7, -9}}
 
-	assert.Equal(t, -4071.0, matrix.determinant())
+	assert.Equal(t, -4071.0, matrix.Determinant())
 }
 
 func TestInvertibleMatrix(t *testing.T) {
@@ -241,7 +241,7 @@ func TestInvertibleMatrix(t *testing.T) {
 		{4, -9, 3, -7},
 		{9, 1, 7, -6}}
 
-	assert.True(t, matrix.invertible())
+	assert.True(t, matrix.Invertible())
 }
 
 func TestNonInvertibleMatrix(t *testing.T) {
@@ -251,7 +251,7 @@ func TestNonInvertibleMatrix(t *testing.T) {
 		{0, -5, 1, -5},
 		{0, 0, 0, 0}}
 
-	assert.False(t, matrix.invertible())
+	assert.False(t, matrix.Invertible())
 }
 
 func TestInverseMatrix(t *testing.T) {
@@ -261,7 +261,7 @@ func TestInverseMatrix(t *testing.T) {
 		{7, 7, -6, -7},
 		{1, -3, 7, 4}}
 
-	inverse := matrix.inverse()
+	Inverse := matrix.Inverse()
 
 	expectedInverse := Matrix{
 		{0.21805, 0.45113, 0.24060, -0.04511},
@@ -269,11 +269,11 @@ func TestInverseMatrix(t *testing.T) {
 		{-0.07895, -0.22368, -0.05263, 0.19737},
 		{-0.52256, -0.81391, -0.30075, 0.30639}}
 
-	assert.Equal(t, 532.0, matrix.determinant())
-	assert.Equal(t, -160.0, matrix.cofactor(2, 3))
-	assert.Equal(t, -160.0/532, inverse[3][2])
-	assert.Equal(t, 105.0/532, inverse[2][3])
-	assert.True(t, expectedInverse.equals(inverse))
+	assert.Equal(t, 532.0, matrix.Determinant())
+	assert.Equal(t, -160.0, matrix.Cofactor(2, 3))
+	assert.Equal(t, -160.0/532, Inverse[3][2])
+	assert.Equal(t, 105.0/532, Inverse[2][3])
+	assert.True(t, expectedInverse.Equals(Inverse))
 }
 
 func TestInverseSecondMatrix(t *testing.T) {
@@ -289,7 +289,7 @@ func TestInverseSecondMatrix(t *testing.T) {
 		{0.35897, 0.35897, 0.43590, 0.92308},
 		{-0.69231, -0.69231, -0.76923, -1.92308}}
 
-	assert.True(t, expectedInverse.equals(matrix.inverse()))
+	assert.True(t, expectedInverse.Equals(matrix.Inverse()))
 }
 
 func TestInverseThirdMatrix(t *testing.T) {
@@ -305,7 +305,7 @@ func TestInverseThirdMatrix(t *testing.T) {
 		{-0.02901, -0.14630, -0.10926, 0.12963},
 		{0.17778, 0.06667, -0.26667, 0.33333}}
 
-	assert.True(t, expectedInverse.equals(matrix.inverse()))
+	assert.True(t, expectedInverse.Equals(matrix.Inverse()))
 }
 
 func TestMultiplyProductByInverse(t *testing.T) {
@@ -321,180 +321,180 @@ func TestMultiplyProductByInverse(t *testing.T) {
 		{7, 0, 5, 4},
 		{6, -2, 0, 5}}
 
-	result := matrix1.multiply(matrix2)
+	result := matrix1.Multiply(matrix2)
 
-	assert.True(t, matrix1.equals(result.multiply(matrix2.inverse())))
+	assert.True(t, matrix1.Equals(result.Multiply(matrix2.Inverse())))
 }
 
 func TestMultiplyByTranslationMatrix(t *testing.T) {
-	matrix := createTranslationMatrix(5, -3, 2)
-	point := createPoint(-3, 4, 5)
+	matrix := NewIdentityMatrix().Translate(5, -3, 2)
+	point := NewPoint(-3, 4, 5)
 
-	result := createPoint(2, 1, 7)
+	result := NewPoint(2, 1, 7)
 
-	assert.Equal(t, result, matrix.multiplyTuple(point))
+	assert.Equal(t, result, matrix.MultiplyTuple(point))
 }
 
 func TestMultiplyInverseByTranslationMatrix(t *testing.T) {
-	matrix := createTranslationMatrix(5, -3, 2).inverse()
-	point := createPoint(-3, 4, 5)
+	matrix := NewIdentityMatrix().Translate(5, -3, 2).Inverse()
+	point := NewPoint(-3, 4, 5)
 
-	result := createPoint(-8, 7, 3)
+	result := NewPoint(-8, 7, 3)
 
-	assert.Equal(t, result, matrix.multiplyTuple(point))
+	assert.Equal(t, result, matrix.MultiplyTuple(point))
 }
 
 func TestTranslationDoesNotAffectVectors(t *testing.T) {
-	matrix := createTranslationMatrix(5, -3, 2)
-	vector := createVector(-3, 4, 5)
+	matrix := NewIdentityMatrix().Translate(5, -3, 2)
+	vector := NewVector(-3, 4, 5)
 
-	assert.Equal(t, vector, matrix.multiplyTuple(vector))
+	assert.Equal(t, vector, matrix.MultiplyTuple(vector))
 }
 
 func TestMultiplyByScalingMatrix(t *testing.T) {
-	matrix := createScalingMatrix(2, 3, 4)
-	point := createPoint(-4, 6, 8)
+	matrix := NewIdentityMatrix().Scale(2, 3, 4)
+	point := NewPoint(-4, 6, 8)
 
-	result := createPoint(-8, 18, 32)
+	result := NewPoint(-8, 18, 32)
 
-	assert.Equal(t, result, matrix.multiplyTuple(point))
+	assert.Equal(t, result, matrix.MultiplyTuple(point))
 }
 
 func TestMultiplyInverseByScalingMatrix(t *testing.T) {
-	matrix := createScalingMatrix(2, 3, 4).inverse()
-	point := createPoint(-4, 6, 8)
+	matrix := NewIdentityMatrix().Scale(2, 3, 4).Inverse()
+	point := NewPoint(-4, 6, 8)
 
-	result := createPoint(-2, 2, 2)
+	result := NewPoint(-2, 2, 2)
 
-	assert.Equal(t, result, matrix.multiplyTuple(point))
+	assert.Equal(t, result, matrix.MultiplyTuple(point))
 }
 
 func TestScalingDoesNotAffectVectors(t *testing.T) {
-	matrix := createScalingMatrix(2, 3, 4)
-	vector := createVector(-4, 6, 8)
+	matrix := NewIdentityMatrix().Scale(2, 3, 4)
+	vector := NewVector(-4, 6, 8)
 
-	result := createVector(-8, 18, 32)
+	result := NewVector(-8, 18, 32)
 
-	assert.Equal(t, result, matrix.multiplyTuple(vector))
+	assert.Equal(t, result, matrix.MultiplyTuple(vector))
 }
 
 func TestRotatePointXAxis(t *testing.T) {
-	point := createPoint(0, 1, 0)
-	halfQuarter := rotationX(math.Pi / 4)
-	fullQuarter := rotationX(math.Pi / 2)
+	point := NewPoint(0, 1, 0)
+	halfQuarter := NewIdentityMatrix().RotateX(math.Pi / 4)
+	fullQuarter := NewIdentityMatrix().RotateX(math.Pi / 2)
 
-	result1 := createPoint(0, math.Sqrt2/2, math.Sqrt2/2)
-	result2 := createPoint(0, 0, 1)
+	result1 := NewPoint(0, math.Sqrt2/2, math.Sqrt2/2)
+	result2 := NewPoint(0, 0, 1)
 
-	EqualTuple(t, result1, halfQuarter.multiplyTuple(point))
-	EqualTuple(t, result2, fullQuarter.multiplyTuple(point))
+	EqualTuple(t, result1, halfQuarter.MultiplyTuple(point))
+	EqualTuple(t, result2, fullQuarter.MultiplyTuple(point))
 }
 
 func TestInverseRotatePointXAxis(t *testing.T) {
-	point := createPoint(0, 1, 0)
-	halfQuarter := rotationX(math.Pi / 4)
-	inv := halfQuarter.inverse()
+	point := NewPoint(0, 1, 0)
+	halfQuarter := NewIdentityMatrix().RotateX(math.Pi / 4)
+	inv := halfQuarter.Inverse()
 
-	result := createPoint(0, math.Sqrt2/2, -math.Sqrt2/2)
+	result := NewPoint(0, math.Sqrt2/2, -math.Sqrt2/2)
 
-	EqualTuple(t, result, inv.multiplyTuple(point))
+	EqualTuple(t, result, inv.MultiplyTuple(point))
 }
 
 func TestRotatePointYAxis(t *testing.T) {
-	point := createPoint(0, 0, 1)
-	halfQuarter := rotationY(math.Pi / 4)
-	fullQuarter := rotationY(math.Pi / 2)
+	point := NewPoint(0, 0, 1)
+	halfQuarter := NewIdentityMatrix().RotateY(math.Pi / 4)
+	fullQuarter := NewIdentityMatrix().RotateY(math.Pi / 2)
 
-	result1 := createPoint(math.Sqrt2/2, 0, math.Sqrt2/2)
-	result2 := createPoint(1, 0, 0)
+	result1 := NewPoint(math.Sqrt2/2, 0, math.Sqrt2/2)
+	result2 := NewPoint(1, 0, 0)
 
-	EqualTuple(t, result1, halfQuarter.multiplyTuple(point))
-	EqualTuple(t, result2, fullQuarter.multiplyTuple(point))
+	EqualTuple(t, result1, halfQuarter.MultiplyTuple(point))
+	EqualTuple(t, result2, fullQuarter.MultiplyTuple(point))
 }
 
 func TestRotatePointZAxis(t *testing.T) {
-	point := createPoint(0, 1, 0)
-	halfQuarter := rotationZ(math.Pi / 4)
-	fullQuarter := rotationZ(math.Pi / 2)
+	point := NewPoint(0, 1, 0)
+	halfQuarter := NewIdentityMatrix().RotateZ(math.Pi / 4)
+	fullQuarter := NewIdentityMatrix().RotateZ(math.Pi / 2)
 
-	result1 := createPoint(-math.Sqrt2/2, math.Sqrt2/2, 0)
-	result2 := createPoint(-1, 0, 0)
+	result1 := NewPoint(-math.Sqrt2/2, math.Sqrt2/2, 0)
+	result2 := NewPoint(-1, 0, 0)
 
-	EqualTuple(t, result1, halfQuarter.multiplyTuple(point))
-	EqualTuple(t, result2, fullQuarter.multiplyTuple(point))
+	EqualTuple(t, result1, halfQuarter.MultiplyTuple(point))
+	EqualTuple(t, result2, fullQuarter.MultiplyTuple(point))
 }
 
 func TestShearingXtoZ(t *testing.T) {
-	transform := shearing(0, 1, 0, 0, 0, 0)
-	point := createPoint(2, 3, 4)
+	transform := NewIdentityMatrix().Shear(0, 1, 0, 0, 0, 0)
+	point := NewPoint(2, 3, 4)
 
-	result := createPoint(6, 3, 4)
+	result := NewPoint(6, 3, 4)
 
-	EqualTuple(t, result, transform.multiplyTuple(point))
+	EqualTuple(t, result, transform.MultiplyTuple(point))
 }
 
 func TestShearingYtoX(t *testing.T) {
-	transform := shearing(0, 0, 1, 0, 0, 0)
-	point := createPoint(2, 3, 4)
+	transform := NewIdentityMatrix().Shear(0, 0, 1, 0, 0, 0)
+	point := NewPoint(2, 3, 4)
 
-	result := createPoint(2, 5, 4)
+	result := NewPoint(2, 5, 4)
 
-	EqualTuple(t, result, transform.multiplyTuple(point))
+	EqualTuple(t, result, transform.MultiplyTuple(point))
 }
 
 func TestShearingYtoZ(t *testing.T) {
-	transform := shearing(0, 0, 0, 1, 0, 0)
-	point := createPoint(2, 3, 4)
+	transform := NewIdentityMatrix().Shear(0, 0, 0, 1, 0, 0)
+	point := NewPoint(2, 3, 4)
 
-	result := createPoint(2, 7, 4)
+	result := NewPoint(2, 7, 4)
 
-	EqualTuple(t, result, transform.multiplyTuple(point))
+	EqualTuple(t, result, transform.MultiplyTuple(point))
 }
 
 func TestShearingZtoX(t *testing.T) {
-	transform := shearing(0, 0, 0, 0, 1, 0)
-	point := createPoint(2, 3, 4)
+	transform := NewIdentityMatrix().Shear(0, 0, 0, 0, 1, 0)
+	point := NewPoint(2, 3, 4)
 
-	result := createPoint(2, 3, 6)
+	result := NewPoint(2, 3, 6)
 
-	EqualTuple(t, result, transform.multiplyTuple(point))
+	EqualTuple(t, result, transform.MultiplyTuple(point))
 }
 
 func TestShearingZtoY(t *testing.T) {
-	transform := shearing(0, 0, 0, 0, 0, 1)
-	point := createPoint(2, 3, 4)
+	transform := NewIdentityMatrix().Shear(0, 0, 0, 0, 0, 1)
+	point := NewPoint(2, 3, 4)
 
-	result := createPoint(2, 3, 7)
+	result := NewPoint(2, 3, 7)
 
-	EqualTuple(t, result, transform.multiplyTuple(point))
+	EqualTuple(t, result, transform.MultiplyTuple(point))
 }
 
 func TestIndividualTransformationsInSequence(t *testing.T) {
-	point := createPoint(1, 0, 1)
-	a := rotationX(math.Pi / 2)
-	b := createScalingMatrix(5, 5, 5)
-	c := createTranslationMatrix(10, 5, 7)
+	point := NewPoint(1, 0, 1)
+	a := NewIdentityMatrix().RotateX(math.Pi / 2)
+	b := NewIdentityMatrix().Scale(5, 5, 5)
+	c := NewIdentityMatrix().Translate(10, 5, 7)
 
 	// rotation
-	point2 := a.multiplyTuple(point)
-	EqualTuple(t, createPoint(1, -1, 0), point2)
+	point2 := a.MultiplyTuple(point)
+	EqualTuple(t, NewPoint(1, -1, 0), point2)
 
 	// scaling
-	point3 := b.multiplyTuple(point2)
-	EqualTuple(t, createPoint(5, -5, 0), point3)
+	point3 := b.MultiplyTuple(point2)
+	EqualTuple(t, NewPoint(5, -5, 0), point3)
 
 	// translation
-	point4 := c.multiplyTuple(point3)
-	EqualTuple(t, createPoint(15, 0, 7), point4)
+	point4 := c.MultiplyTuple(point3)
+	EqualTuple(t, NewPoint(15, 0, 7), point4)
 }
 
 func TestChainedTransformationsInReverseOrder(t *testing.T) {
-	point := createPoint(1, 0, 1)
-	a := rotationX(math.Pi / 2)
-	b := createScalingMatrix(5, 5, 5)
-	c := createTranslationMatrix(10, 5, 7)
+	point := NewPoint(1, 0, 1)
 
-	result := c.multiply(b).multiply(a)
+	result := NewIdentityMatrix().
+		Translate(10, 5, 7).
+		Scale(5, 5, 5).
+		RotateX(math.Pi / 2)
 
-	EqualTuple(t, createPoint(15, 0, 7), result.multiplyTuple(point))
+	EqualTuple(t, NewPoint(15, 0, 7), result.MultiplyTuple(point))
 }

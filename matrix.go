@@ -4,7 +4,27 @@ import "math"
 
 type Matrix [][]float64
 
-func (matrix Matrix) equals(other Matrix) bool {
+func NewMatrix(rows, cols int) Matrix {
+	matrix := make(Matrix, rows)
+	for i := range matrix {
+		matrix[i] = make([]float64, cols)
+	}
+
+	return matrix
+}
+
+func NewIdentityMatrix() Matrix {
+	matrix := NewMatrix(4, 4)
+
+	matrix[0][0] = 1
+	matrix[1][1] = 1
+	matrix[2][2] = 1
+	matrix[3][3] = 1
+
+	return matrix
+}
+
+func (matrix Matrix) Equals(other Matrix) bool {
 	if len(matrix) != len(other) {
 		return false
 	}
@@ -17,7 +37,7 @@ func (matrix Matrix) equals(other Matrix) bool {
 
 	for row := range matrix {
 		for col := range matrix[row] {
-			if !equal(matrix[row][col], other[row][col]) {
+			if !floatEquals(matrix[row][col], other[row][col]) {
 				return false
 			}
 		}
@@ -26,8 +46,8 @@ func (matrix Matrix) equals(other Matrix) bool {
 	return true
 }
 
-func (matrix Matrix) multiply(other Matrix) Matrix {
-	result := createMatrix(len(matrix), len(matrix[0]))
+func (matrix Matrix) Multiply(other Matrix) Matrix {
+	result := NewMatrix(len(matrix), len(matrix[0]))
 
 	for row := range matrix {
 		for col := range matrix[row] {
@@ -44,7 +64,7 @@ func (matrix Matrix) multiply(other Matrix) Matrix {
 	return result
 }
 
-func (matrix Matrix) multiplyTuple(tuple Tuple) Tuple {
+func (matrix Matrix) MultiplyTuple(tuple Tuple) Tuple {
 	result := [4]float64{}
 
 	for i := 0; i < 4; i++ {
@@ -61,8 +81,8 @@ func (matrix Matrix) multiplyTuple(tuple Tuple) Tuple {
 	return Tuple{result[0], result[1], result[2], result[3]}
 }
 
-func (matrix Matrix) transpose() Matrix {
-	result := createMatrix(len(matrix), len(matrix[0]))
+func (matrix Matrix) Transpose() Matrix {
+	result := NewMatrix(len(matrix), len(matrix[0]))
 
 	for row := range result {
 		for col := range result[0] {
@@ -73,22 +93,22 @@ func (matrix Matrix) transpose() Matrix {
 	return result
 }
 
-func (matrix Matrix) determinant() float64 {
+func (matrix Matrix) Determinant() float64 {
 	if len(matrix) == 2 && len(matrix[0]) == 2 {
 		return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
 	}
 
-	determinant := 0.0
+	Determinant := 0.0
 
 	for col := range matrix[0] {
-		determinant += matrix[0][col] * matrix.cofactor(0, col)
+		Determinant += matrix[0][col] * matrix.Cofactor(0, col)
 	}
 
-	return determinant
+	return Determinant
 }
 
-func (matrix Matrix) submatrix(skipRow, skipCol int) Matrix {
-	result := createMatrix(len(matrix)-1, len(matrix[0])-1)
+func (matrix Matrix) Submatrix(skipRow, skipCol int) Matrix {
+	result := NewMatrix(len(matrix)-1, len(matrix[0])-1)
 
 	var row, col int
 	for i := range result {
@@ -112,125 +132,105 @@ func (matrix Matrix) submatrix(skipRow, skipCol int) Matrix {
 	return result
 }
 
-func (matrix Matrix) minor(skipRow, skipCol int) float64 {
-	return matrix.submatrix(skipRow, skipCol).determinant()
+func (matrix Matrix) Minor(skipRow, skipCol int) float64 {
+	return matrix.Submatrix(skipRow, skipCol).Determinant()
 }
 
-func (matrix Matrix) cofactor(skipRow, skipCol int) float64 {
-	minor := matrix.submatrix(skipRow, skipCol).determinant()
+func (matrix Matrix) Cofactor(skipRow, skipCol int) float64 {
+	Minor := matrix.Submatrix(skipRow, skipCol).Determinant()
 
 	if (skipRow+skipCol)%2 == 0 {
-		return minor
+		return Minor
 	} else {
-		return minor * -1
+		return Minor * -1
 	}
 }
 
-func (matrix Matrix) invertible() bool {
-	return matrix.determinant() != 0
+func (matrix Matrix) Invertible() bool {
+	return matrix.Determinant() != 0
 }
 
-func (matrix Matrix) inverse() Matrix {
-	if !matrix.invertible() {
-		panic("precondition - matrix is not invertible")
+func (matrix Matrix) Inverse() Matrix {
+	if !matrix.Invertible() {
+		panic("precondition - matrix is not Invertible")
 	}
 
-	result := createMatrix(len(matrix), len(matrix[0]))
-	determinant := matrix.determinant()
+	result := NewMatrix(len(matrix), len(matrix[0]))
+	Determinant := matrix.Determinant()
 
 	for row := range matrix {
 		for col := range matrix[0] {
-			cofactor := matrix.cofactor(row, col)
-			result[col][row] = cofactor / determinant
+			Cofactor := matrix.Cofactor(row, col)
+			result[col][row] = Cofactor / Determinant
 		}
 	}
 
 	return result
 }
 
-func createMatrix(rows, cols int) Matrix {
-	matrix := make(Matrix, rows)
-	for i := range matrix {
-		matrix[i] = make([]float64, cols)
-	}
+func (matrix Matrix) Translate(x float64, y float64, z float64) Matrix {
+	translation := NewIdentityMatrix()
 
-	return matrix
+	translation[0][3] = x
+	translation[1][3] = y
+	translation[2][3] = z
+
+	return matrix.Multiply(translation)
 }
 
-func createIdentityMatrix() Matrix {
-	matrix := createMatrix(4, 4)
+func (matrix Matrix) Scale(x float64, y float64, z float64) Matrix {
+	scaling := NewMatrix(4, 4)
 
-	matrix[0][0] = 1
-	matrix[1][1] = 1
-	matrix[2][2] = 1
-	matrix[3][3] = 1
+	scaling[0][0] = x
+	scaling[1][1] = y
+	scaling[2][2] = z
+	scaling[3][3] = 1
 
-	return matrix
+	return matrix.Multiply(scaling)
 }
 
-func createTranslationMatrix(x float64, y float64, z float64) Matrix {
-	matrix := createIdentityMatrix()
+func (matrix Matrix) RotateX(radians float64) Matrix {
+	rotation := NewIdentityMatrix()
 
-	matrix[0][3] = x
-	matrix[1][3] = y
-	matrix[2][3] = z
+	rotation[1][1] = math.Cos(radians)
+	rotation[1][2] = -math.Sin(radians)
+	rotation[2][1] = math.Sin(radians)
+	rotation[2][2] = math.Cos(radians)
 
-	return matrix
+	return matrix.Multiply(rotation)
 }
 
-func createScalingMatrix(x float64, y float64, z float64) Matrix {
-	matrix := createMatrix(4, 4)
+func (matrix Matrix) RotateY(radians float64) Matrix {
+	rotation := NewIdentityMatrix()
 
-	matrix[0][0] = x
-	matrix[1][1] = y
-	matrix[2][2] = z
-	matrix[3][3] = 1
+	rotation[0][0] = math.Cos(radians)
+	rotation[0][2] = math.Sin(radians)
+	rotation[2][0] = -math.Sin(radians)
+	rotation[2][2] = math.Cos(radians)
 
-	return matrix
+	return matrix.Multiply(rotation)
 }
 
-func rotationX(radians float64) Matrix {
-	matrix := createIdentityMatrix()
+func (matrix Matrix) RotateZ(radians float64) Matrix {
+	rotation := NewIdentityMatrix()
 
-	matrix[1][1] = math.Cos(radians)
-	matrix[1][2] = -math.Sin(radians)
-	matrix[2][1] = math.Sin(radians)
-	matrix[2][2] = math.Cos(radians)
+	rotation[0][0] = math.Cos(radians)
+	rotation[0][1] = -math.Sin(radians)
+	rotation[1][0] = math.Sin(radians)
+	rotation[1][1] = math.Cos(radians)
 
-	return matrix
+	return matrix.Multiply(rotation)
 }
 
-func rotationY(radians float64) Matrix {
-	matrix := createIdentityMatrix()
+func (matrix Matrix) Shear(xy float64, xz float64, yx float64, yz float64, zx float64, zy float64) Matrix {
+	shearing := NewIdentityMatrix()
 
-	matrix[0][0] = math.Cos(radians)
-	matrix[0][2] = math.Sin(radians)
-	matrix[2][0] = -math.Sin(radians)
-	matrix[2][2] = math.Cos(radians)
+	shearing[0][1] = xy
+	shearing[0][2] = xz
+	shearing[1][0] = yx
+	shearing[1][2] = yz
+	shearing[2][0] = zx
+	shearing[2][1] = zy
 
-	return matrix
-}
-
-func rotationZ(radians float64) Matrix {
-	matrix := createIdentityMatrix()
-
-	matrix[0][0] = math.Cos(radians)
-	matrix[0][1] = -math.Sin(radians)
-	matrix[1][0] = math.Sin(radians)
-	matrix[1][1] = math.Cos(radians)
-
-	return matrix
-}
-
-func shearing(xy float64, xz float64, yx float64, yz float64, zx float64, zy float64) Matrix {
-	matrix := createIdentityMatrix()
-
-	matrix[0][1] = xy
-	matrix[0][2] = xz
-	matrix[1][0] = yx
-	matrix[1][2] = yz
-	matrix[2][0] = zx
-	matrix[2][1] = zy
-
-	return matrix
+	return matrix.Multiply(shearing)
 }
