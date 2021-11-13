@@ -2,10 +2,41 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 )
 
 func main() {
+	clock()
+}
+
+func clock() {
+	length := 20
+	centerPos := float64(length / 2)
+	radius := 3.0 / 8 * float64(length)
+	canvas := NewCanvas(length, length)
+	hour := NewPoint(0, 0, 1)
+	rotation := NewIdentityMatrix().RotateY(2 * math.Pi / 12)
+
+	for i := 0; i < 12; i++ {
+		canvas.WritePixel(int((hour.x*radius)+centerPos), int((hour.z*radius)+centerPos), Color{1, 1, 1})
+		hour = rotation.MultiplyTuple(hour)
+	}
+
+	os.WriteFile("clock.ppm", []byte(canvas.ToPPM()), 0666)
+}
+
+type Projectile struct {
+	position Tuple
+	velocity Tuple
+}
+
+type Environment struct {
+	gravity Tuple
+	wind    Tuple
+}
+
+func simulatedProjectile() {
 	start := NewPoint(0, 1, 0)
 	velocity := NewVector(1, 1.8, 0).Normalize().Multiply(11.25)
 	proj := Projectile{start, velocity}
@@ -29,17 +60,7 @@ func main() {
 	}
 
 	fmt.Println(ticks, " ticks to hit the ground")
-	os.WriteFile("canvas.ppm", []byte(canvas.ToPPM()), 0666)
-}
-
-type Projectile struct {
-	position Tuple
-	velocity Tuple
-}
-
-type Environment struct {
-	gravity Tuple
-	wind    Tuple
+	os.WriteFile("projectile.ppm", []byte(canvas.ToPPM()), 0666)
 }
 
 func tick(env Environment, proj Projectile) Projectile {
