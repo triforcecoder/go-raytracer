@@ -167,3 +167,60 @@ func TestHitLowestNonNegative(t *testing.T) {
 
 	assert.Equal(t, i4, *i)
 }
+
+func TestTranslateRay(t *testing.T) {
+	r := Ray{NewPoint(1, 2, 3), NewVector(0, 1, 0)}
+	m := NewIdentityMatrix().Translate(3, 4, 5)
+
+	r2 := r.Transform(m)
+
+	assert.Equal(t, NewPoint(4, 6, 8), r2.origin)
+	assert.Equal(t, NewVector(0, 1, 0), r2.direction)
+}
+
+func TestScaleRay(t *testing.T) {
+	r := Ray{NewPoint(1, 2, 3), NewVector(0, 1, 0)}
+	m := NewIdentityMatrix().Scale(2, 3, 4)
+
+	r2 := r.Transform(m)
+
+	assert.Equal(t, NewPoint(2, 6, 12), r2.origin)
+	assert.Equal(t, NewVector(0, 3, 0), r2.direction)
+}
+
+func TestSphereDefaultTransformation(t *testing.T) {
+	s := CreateSphere()
+
+	assert.Equal(t, NewIdentityMatrix(), s.transform)
+}
+
+func TestChangeSphereTransformation(t *testing.T) {
+	s := CreateSphere()
+	transform := NewIdentityMatrix().Translate(2, 3, 4)
+
+	s.transform = transform
+
+	assert.Equal(t, transform, s.transform)
+}
+
+func TestIntersectingScaledSphereWithRay(t *testing.T) {
+	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
+	s := CreateSphere()
+
+	s.transform = NewIdentityMatrix().Scale(2, 2, 2)
+	xs := s.Intersects(r)
+
+	assert.Equal(t, 2, len(xs))
+	assert.Equal(t, 3.0, xs[0].t)
+	assert.Equal(t, 7.0, xs[1].t)
+}
+
+func TestIntersectingTranslatedSphereWithRay(t *testing.T) {
+	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
+	s := CreateSphere()
+
+	s.transform = NewIdentityMatrix().Translate(5, 0, 0)
+	xs := s.Intersects(r)
+
+	assert.Equal(t, 0, len(xs))
+}

@@ -8,7 +8,8 @@ type Ray struct {
 }
 
 type Sphere struct {
-	origin Tuple
+	origin    Tuple
+	transform Matrix
 }
 
 type Intersection struct {
@@ -17,7 +18,7 @@ type Intersection struct {
 }
 
 func CreateSphere() Sphere {
-	return Sphere{NewPoint(0, 0, 0)}
+	return Sphere{NewPoint(0, 0, 0), NewIdentityMatrix()}
 }
 
 func CreateIntersection(t float64, s Sphere) Intersection {
@@ -28,9 +29,19 @@ func (ray Ray) Position(t float64) Tuple {
 	return ray.origin.Add(ray.direction.Multiply(t))
 }
 
+func (ray Ray) Transform(m Matrix) Ray {
+	result := Ray{}
+
+	result.origin = m.MultiplyTuple(ray.origin)
+	result.direction = m.MultiplyTuple(ray.direction)
+
+	return result
+}
+
 func (sphere Sphere) Intersects(ray Ray) []Intersection {
 	xs := []Intersection{}
 
+	ray = ray.Transform(sphere.transform.Inverse())
 	sphereToRay := ray.origin.Subtract(sphere.origin)
 
 	a := ray.direction.Dot(ray.direction)
