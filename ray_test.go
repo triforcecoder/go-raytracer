@@ -30,7 +30,7 @@ func TestIntersectsSphereAtTwoPoints(t *testing.T) {
 	origin := NewPoint(0, 0, -5)
 	direction := NewVector(0, 0, 1)
 	r := Ray{origin, direction}
-	s := CreateSphere()
+	s := NewSphere()
 
 	xs := s.Intersects(r)
 
@@ -43,7 +43,7 @@ func TestIntersectsSphereAtTangent(t *testing.T) {
 	origin := NewPoint(0, -1, -5)
 	direction := NewVector(0, 0, 1)
 	r := Ray{origin, direction}
-	s := CreateSphere()
+	s := NewSphere()
 
 	xs := s.Intersects(r)
 
@@ -56,7 +56,7 @@ func TestMissesSphere(t *testing.T) {
 	origin := NewPoint(0, 2, -5)
 	direction := NewVector(0, 0, 1)
 	r := Ray{origin, direction}
-	s := CreateSphere()
+	s := NewSphere()
 
 	xs := s.Intersects(r)
 
@@ -67,7 +67,7 @@ func TestRayOriginInsideSphere(t *testing.T) {
 	origin := NewPoint(0, 0, 0)
 	direction := NewVector(0, 0, 1)
 	r := Ray{origin, direction}
-	s := CreateSphere()
+	s := NewSphere()
 
 	xs := s.Intersects(r)
 
@@ -80,7 +80,7 @@ func TestSphereBehindRay(t *testing.T) {
 	origin := NewPoint(0, 0, 5)
 	direction := NewVector(0, 0, 1)
 	r := Ray{origin, direction}
-	s := CreateSphere()
+	s := NewSphere()
 
 	xs := s.Intersects(r)
 
@@ -90,17 +90,17 @@ func TestSphereBehindRay(t *testing.T) {
 }
 
 func TestIntersection(t *testing.T) {
-	s := CreateSphere()
-	i := CreateIntersection(3.5, s)
+	s := NewSphere()
+	i := NewIntersection(3.5, s)
 
 	assert.Equal(t, 3.5, i.t)
 	assert.Equal(t, s, i.object)
 }
 
 func TestIntersectionCollection(t *testing.T) {
-	s := CreateSphere()
-	i1 := CreateIntersection(1, s)
-	i2 := CreateIntersection(2, s)
+	s := NewSphere()
+	i1 := NewIntersection(1, s)
+	i2 := NewIntersection(2, s)
 
 	xs := []Intersection{i1, i2}
 
@@ -112,7 +112,7 @@ func TestIntersectSetsObject(t *testing.T) {
 	origin := NewPoint(0, 0, -5)
 	direction := NewVector(0, 0, 1)
 	r := Ray{origin, direction}
-	s := CreateSphere()
+	s := NewSphere()
 
 	xs := s.Intersects(r)
 
@@ -123,9 +123,9 @@ func TestIntersectSetsObject(t *testing.T) {
 }
 
 func TestHitAllIntersectionsPositive(t *testing.T) {
-	s := CreateSphere()
-	i1 := CreateIntersection(1, s)
-	i2 := CreateIntersection(2, s)
+	s := NewSphere()
+	i1 := NewIntersection(1, s)
+	i2 := NewIntersection(2, s)
 	xs := []Intersection{i2, i1}
 
 	i := Hit(xs)
@@ -134,9 +134,9 @@ func TestHitAllIntersectionsPositive(t *testing.T) {
 }
 
 func TestHitSomeIntersectionsNegative(t *testing.T) {
-	s := CreateSphere()
-	i1 := CreateIntersection(-1, s)
-	i2 := CreateIntersection(1, s)
+	s := NewSphere()
+	i1 := NewIntersection(-1, s)
+	i2 := NewIntersection(1, s)
 	xs := []Intersection{i2, i1}
 
 	i := Hit(xs)
@@ -145,9 +145,9 @@ func TestHitSomeIntersectionsNegative(t *testing.T) {
 }
 
 func TestHitAllIntersectionsNegative(t *testing.T) {
-	s := CreateSphere()
-	i1 := CreateIntersection(-2, s)
-	i2 := CreateIntersection(-1, s)
+	s := NewSphere()
+	i1 := NewIntersection(-2, s)
+	i2 := NewIntersection(-1, s)
 	xs := []Intersection{i2, i1}
 
 	i := Hit(xs)
@@ -156,11 +156,11 @@ func TestHitAllIntersectionsNegative(t *testing.T) {
 }
 
 func TestHitLowestNonNegative(t *testing.T) {
-	s := CreateSphere()
-	i1 := CreateIntersection(5, s)
-	i2 := CreateIntersection(7, s)
-	i3 := CreateIntersection(-3, s)
-	i4 := CreateIntersection(2, s)
+	s := NewSphere()
+	i1 := NewIntersection(5, s)
+	i2 := NewIntersection(7, s)
+	i3 := NewIntersection(-3, s)
+	i4 := NewIntersection(2, s)
 	xs := []Intersection{i1, i4, i3, i2}
 
 	i := Hit(xs)
@@ -189,13 +189,13 @@ func TestScaleRay(t *testing.T) {
 }
 
 func TestSphereDefaultTransformation(t *testing.T) {
-	s := CreateSphere()
+	s := NewSphere()
 
 	assert.Equal(t, NewIdentityMatrix(), s.transform)
 }
 
 func TestChangeSphereTransformation(t *testing.T) {
-	s := CreateSphere()
+	s := NewSphere()
 	transform := NewIdentityMatrix().Translate(2, 3, 4)
 
 	s.transform = transform
@@ -205,7 +205,7 @@ func TestChangeSphereTransformation(t *testing.T) {
 
 func TestIntersectingScaledSphereWithRay(t *testing.T) {
 	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
-	s := CreateSphere()
+	s := NewSphere()
 
 	s.transform = NewIdentityMatrix().Scale(2, 2, 2)
 	xs := s.Intersects(r)
@@ -217,7 +217,7 @@ func TestIntersectingScaledSphereWithRay(t *testing.T) {
 
 func TestIntersectingTranslatedSphereWithRay(t *testing.T) {
 	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
-	s := CreateSphere()
+	s := NewSphere()
 
 	s.transform = NewIdentityMatrix().Translate(5, 0, 0)
 	xs := s.Intersects(r)

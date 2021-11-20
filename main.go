@@ -7,7 +7,41 @@ import (
 )
 
 func main() {
-	clock()
+	redSphere()
+}
+
+func redSphere() {
+	rayOrigin := NewPoint(0, 0, -5)
+	wallZ := 10
+	wallSize := 7.0
+	canvasPixels := 100
+	pixelSize := wallSize / float64(canvasPixels)
+	half := wallSize / 2
+
+	canvas := NewCanvas(canvasPixels, canvasPixels)
+	red := Color{1, 0, 0}
+	shape := NewSphere()
+
+	for y := 0; y < canvas.height; y++ {
+		// compute the world y coordinate (top = +half, bottom = -half)
+		worldY := half - pixelSize*float64(y)
+
+		for x := 0; x < canvas.width; x++ {
+			// compute the world x coordinate (left = -half, right = half)
+			worldX := -half + pixelSize*float64(x)
+
+			position := NewPoint(worldX, worldY, float64(wallZ))
+
+			r := Ray{rayOrigin, position.Subtract(rayOrigin).Normalize()}
+			xs := shape.Intersects(r)
+
+			if Hit(xs) != nil {
+				canvas.WritePixel(x, y, red)
+			}
+		}
+	}
+
+	os.WriteFile("red-sphere.ppm", []byte(canvas.ToPPM()), 0666)
 }
 
 func clock() {

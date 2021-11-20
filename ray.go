@@ -17,11 +17,11 @@ type Intersection struct {
 	object Sphere
 }
 
-func CreateSphere() Sphere {
+func NewSphere() Sphere {
 	return Sphere{NewPoint(0, 0, 0), NewIdentityMatrix()}
 }
 
-func CreateIntersection(t float64, s Sphere) Intersection {
+func NewIntersection(t float64, s Sphere) Intersection {
 	return Intersection{t, s}
 }
 
