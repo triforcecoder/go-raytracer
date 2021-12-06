@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -223,4 +224,58 @@ func TestIntersectingTranslatedSphereWithRay(t *testing.T) {
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 0, len(xs))
+}
+
+func TestSphereNormalXAxis(t *testing.T) {
+	s := NewSphere()
+	n := s.NormalAt(NewPoint(1, 0, 0))
+
+	assert.Equal(t, NewVector(1, 0, 0), n)
+}
+
+func TestSphereNormalYAxis(t *testing.T) {
+	s := NewSphere()
+	n := s.NormalAt(NewPoint(0, 1, 0))
+
+	assert.Equal(t, NewVector(0, 1, 0), n)
+}
+
+func TestSphereNormalZAxis(t *testing.T) {
+	s := NewSphere()
+	n := s.NormalAt(NewPoint(0, 0, 1))
+
+	assert.Equal(t, NewVector(0, 0, 1), n)
+}
+
+func TestSphereNormalNonAxialPoint(t *testing.T) {
+	s := NewSphere()
+	x := math.Sqrt(3) / 3
+	n := s.NormalAt(NewPoint(x, x, x))
+
+	assert.Equal(t, NewVector(x, x, x), n)
+}
+
+func TestNormalIsNormalizedVector(t *testing.T) {
+	s := NewSphere()
+	x := math.Sqrt(3) / 3
+	n := s.NormalAt(NewPoint(x, x, x))
+
+	assert.Equal(t, n.Normalize(), n)
+}
+
+func TestNormalTranslatedSphere(t *testing.T) {
+	s := NewSphere()
+	s.transform = s.transform.Translate(0, 1, 0)
+	n := s.NormalAt(NewPoint(0, 1.70711, -0.70711))
+
+	EqualTuple(t, NewVector(0, 0.70711, -0.70711), n)
+}
+
+func TestNormalTransformedSphere(t *testing.T) {
+	s := NewSphere()
+	s.transform = NewIdentityMatrix()
+	s.transform = s.transform.Scale(1, 0.5, 1).RotateZ(math.Pi / 5)
+	n := s.NormalAt(NewPoint(0, math.Sqrt2/2, -math.Sqrt2/2))
+
+	EqualTuple(t, NewVector(0, 0.97014, -0.24254), n)
 }
