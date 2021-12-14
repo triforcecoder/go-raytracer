@@ -6,6 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func EqualColor(t *testing.T, expected Color, actual Color) {
+	if floatEquals(expected.red, actual.red) &&
+		floatEquals(expected.green, actual.green) &&
+		floatEquals(expected.blue, actual.blue) {
+		assert.True(t, true)
+	} else {
+		assert.Equal(t, expected, actual)
+	}
+}
+
 func TestCreateColor(t *testing.T) {
 	color := Color{-0.5, 0.4, 1.7}
 	assert.Equal(t, -0.5, color.red)

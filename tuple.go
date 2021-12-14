@@ -95,6 +95,11 @@ func (tuple Tuple) Cross(other Tuple) Tuple {
 		tuple.x*other.y-tuple.y*other.x)
 }
 
+func (tuple Tuple) Reflect(normal Tuple) Tuple {
+	// Wish I had operator overloading 😭
+	return tuple.Subtract(normal.Multiply(2).Multiply(tuple.Dot(normal)))
+}
+
 func floatEquals(x, y float64) bool {
 	const epsilon = 0.00001
 

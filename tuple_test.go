@@ -7,6 +7,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func EqualTuple(t *testing.T, expected Tuple, actual Tuple) {
+	if floatEquals(expected.x, actual.x) &&
+		floatEquals(expected.y, actual.y) &&
+		floatEquals(expected.z, actual.z) &&
+		floatEquals(expected.w, actual.w) {
+		assert.True(t, true)
+	} else {
+		assert.Equal(t, expected, actual)
+	}
+}
+
 func TestTupleIsPoint(t *testing.T) {
 	point := NewPoint(4.3, -4.2, 3.1)
 	assert.True(t, point.IsPoint())
@@ -103,4 +114,18 @@ func TestCrossProductVector(t *testing.T) {
 	vector2 := NewVector(2, 3, 4)
 	assert.Equal(t, NewVector(-1, 2, -1), vector1.Cross(vector2))
 	assert.Equal(t, NewVector(1, -2, 1), vector2.Cross(vector1))
+}
+
+func TestReflectVector45Degrees(t *testing.T) {
+	vector := NewVector(1, -1, 0)
+	normal := NewVector(0, 1, 0)
+
+	assert.Equal(t, NewVector(1, 1, 0), vector.Reflect(normal))
+}
+
+func TestReflectVectorSlantedSurface(t *testing.T) {
+	vector := NewVector(0, -1, 0)
+	normal := NewVector(math.Sqrt2/2, math.Sqrt2/2, 0)
+
+	EqualTuple(t, NewVector(1, 0, 0), vector.Reflect(normal))
 }

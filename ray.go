@@ -10,6 +10,7 @@ type Ray struct {
 type Sphere struct {
 	origin    Tuple
 	transform Matrix
+	material  Material
 }
 
 type Intersection struct {
@@ -18,7 +19,7 @@ type Intersection struct {
 }
 
 func NewSphere() Sphere {
-	return Sphere{NewPoint(0, 0, 0), NewIdentityMatrix()}
+	return Sphere{NewPoint(0, 0, 0), NewIdentityMatrix(), NewMaterial()}
 }
 
 func NewIntersection(t float64, s Sphere) Intersection {

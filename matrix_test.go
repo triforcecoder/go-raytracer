@@ -7,17 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func EqualTuple(t *testing.T, expected Tuple, actual Tuple) {
-	if floatEquals(expected.x, actual.x) &&
-		floatEquals(expected.y, actual.y) &&
-		floatEquals(expected.z, actual.z) &&
-		floatEquals(expected.w, actual.w) {
-		assert.True(t, true)
-	} else {
-		assert.Equal(t, expected, actual)
-	}
-}
-
 func TestCreate2x2Matrix(t *testing.T) {
 	matrix := Matrix{
 		{-3, 5},
