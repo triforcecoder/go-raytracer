@@ -39,8 +39,8 @@ func generateSphere() {
 			r := Ray{rayOrigin, position.Subtract(rayOrigin).Normalize()}
 			xs := shape.Intersects(r)
 
-			hit := Hit(xs)
-			if hit != nil {
+			hit, err := Hit(xs)
+			if err != nil {
 				point := r.Position(hit.t)
 				normal := hit.object.NormalAt(point)
 				eye := r.direction.Multiply(-1)
