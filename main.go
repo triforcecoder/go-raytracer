@@ -14,7 +14,7 @@ func generateSphere() {
 	rayOrigin := NewPoint(0, 0, -5)
 	wallZ := 10
 	wallSize := 7.0
-	canvasPixels := 100
+	var canvasPixels uint = 100
 	pixelSize := wallSize / float64(canvasPixels)
 	half := wallSize / 2
 
@@ -26,11 +26,11 @@ func generateSphere() {
 	lightColor := Color{1, 1, 1}
 	light := PointLight{lightPosition, lightColor}
 
-	for y := 0; y < canvas.height; y++ {
+	for y := uint(0); y < canvas.height; y++ {
 		// compute the world y coordinate (top = +half, bottom = -half)
 		worldY := half - pixelSize*float64(y)
 
-		for x := 0; x < canvas.width; x++ {
+		for x := uint(0); x < canvas.width; x++ {
 			// compute the world x coordinate (left = -half, right = half)
 			worldX := -half + pixelSize*float64(x)
 
@@ -54,7 +54,7 @@ func generateSphere() {
 }
 
 func clock() {
-	length := 20
+	var length uint = 20
 	centerPos := float64(length / 2)
 	radius := 3.0 / 8 * float64(length)
 	canvas := NewCanvas(length, length)
@@ -62,7 +62,7 @@ func clock() {
 	rotation := NewIdentityMatrix().RotateY(2 * math.Pi / 12)
 
 	for i := 0; i < 12; i++ {
-		canvas.WritePixel(int((hour.x*radius)+centerPos), int((hour.z*radius)+centerPos), Color{1, 1, 1})
+		canvas.WritePixel(uint((hour.x*radius)+centerPos), uint((hour.z*radius)+centerPos), Color{1, 1, 1})
 		hour = rotation.MultiplyTuple(hour)
 	}
 
@@ -88,15 +88,15 @@ func simulatedProjectile() {
 	wind := NewVector(-0.01, 0, 0)
 	env := Environment{gravity, wind}
 
-	width := 900
-	height := 550
+	var width uint = 900
+	var height uint = 550
 	canvas := NewCanvas(width, height)
 
 	ticks := 0
 
 	for proj.position.y > 0 {
 		fmt.Println("projectile position = ", proj.position)
-		canvas.WritePixel(int(proj.position.x), height-int(proj.position.y), Color{1, 0, 0})
+		canvas.WritePixel(uint(proj.position.x), height-uint(proj.position.y), Color{1, 0, 0})
 
 		proj = tick(env, proj)
 		ticks++

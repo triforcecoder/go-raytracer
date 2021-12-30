@@ -10,8 +10,8 @@ import (
 func TestNewCanvas(t *testing.T) {
 	canvas := NewCanvas(10, 20)
 
-	assert.Equal(t, 10, canvas.width)
-	assert.Equal(t, 20, canvas.height)
+	assert.Equal(t, uint(10), canvas.width)
+	assert.Equal(t, uint(20), canvas.height)
 	assert.Equal(t, 10, len(canvas.pixel))
 	assert.Equal(t, 20, len(canvas.pixel[0]))
 
@@ -63,8 +63,8 @@ func TestPixelDataToPPM(t *testing.T) {
 func TestSplitLongLinesToPPM(t *testing.T) {
 	canvas := NewCanvas(10, 2)
 
-	for j := 0; j < canvas.height; j++ {
-		for i := 0; i < canvas.width; i++ {
+	for j := uint(0); j < canvas.height; j++ {
+		for i := uint(0); i < canvas.width; i++ {
 			canvas.WritePixel(i, j, Color{1, 0.8, 0.6})
 		}
 	}

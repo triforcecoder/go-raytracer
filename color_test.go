@@ -7,9 +7,7 @@ import (
 )
 
 func EqualColor(t *testing.T, expected Color, actual Color) {
-	if floatEquals(expected.red, actual.red) &&
-		floatEquals(expected.green, actual.green) &&
-		floatEquals(expected.blue, actual.blue) {
+	if expected.Equals(actual) {
 		assert.True(t, true)
 	} else {
 		assert.Equal(t, expected, actual)

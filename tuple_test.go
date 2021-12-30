@@ -8,10 +8,7 @@ import (
 )
 
 func EqualTuple(t *testing.T, expected Tuple, actual Tuple) {
-	if floatEquals(expected.x, actual.x) &&
-		floatEquals(expected.y, actual.y) &&
-		floatEquals(expected.z, actual.z) &&
-		floatEquals(expected.w, actual.w) {
+	if expected.Equals(actual) {
 		assert.True(t, true)
 	} else {
 		assert.Equal(t, expected, actual)

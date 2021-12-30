@@ -24,6 +24,20 @@ func NewIdentityMatrix() Matrix {
 	return matrix
 }
 
+func ViewTransform(from Tuple, to Tuple, up Tuple) Matrix {
+	forward := to.Subtract(from).Normalize()
+	upn := up.Normalize()
+	left := forward.Cross(upn)
+	trueUp := left.Cross(forward)
+	orientation := NewMatrix(4, 4)
+	orientation[0] = []float64{left.x, left.y, left.z, 0}
+	orientation[1] = []float64{trueUp.x, trueUp.y, trueUp.z, 0}
+	orientation[2] = []float64{-forward.x, -forward.y, -forward.z, 0}
+	orientation[3] = []float64{0, 0, 0, 1}
+
+	return orientation.Translate(-from.x, -from.y, -from.z)
+}
+
 func (matrix Matrix) Equals(other Matrix) bool {
 	if len(matrix) != len(other) {
 		return false

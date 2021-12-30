@@ -6,12 +6,12 @@ import (
 )
 
 type Canvas struct {
-	width  int
-	height int
+	width  uint
+	height uint
 	pixel  [][]Color
 }
 
-func NewCanvas(width, height int) Canvas {
+func NewCanvas(width, height uint) Canvas {
 	pixel := make([][]Color, width)
 	for i := range pixel {
 		pixel[i] = make([]Color, height)
@@ -20,7 +20,7 @@ func NewCanvas(width, height int) Canvas {
 	return Canvas{width, height, pixel}
 }
 
-func (canvas Canvas) WritePixel(x, y int, color Color) {
+func (canvas Canvas) WritePixel(x, y uint, color Color) {
 	canvas.pixel[x][y] = color
 }
 
@@ -31,9 +31,9 @@ func (canvas Canvas) ToPPM() string {
 	header := fmt.Sprintf("P3\n%d %d\n255\n", canvas.width, canvas.height)
 
 	data := ""
-	for j := 0; j < canvas.height; j++ {
+	for j := uint(0); j < canvas.height; j++ {
 		row := ""
-		for i := 0; i < canvas.width; i++ {
+		for i := uint(0); i < canvas.width; i++ {
 			pixel := []string{
 				strconv.Itoa(scaleFloat(canvas.pixel[i][j].red)),
 				strconv.Itoa(scaleFloat(canvas.pixel[i][j].green)),

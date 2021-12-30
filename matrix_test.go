@@ -7,6 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func EqualMatrix(t *testing.T, expected Matrix, actual Matrix) {
+	if expected.Equals(actual) {
+		assert.True(t, true)
+	} else {
+		assert.Equal(t, expected, actual)
+	}
+}
+
 func TestCreate2x2Matrix(t *testing.T) {
 	matrix := Matrix{
 		{-3, 5},
@@ -486,4 +494,50 @@ func TestChainedTransformationsInReverseOrder(t *testing.T) {
 		RotateX(math.Pi / 2)
 
 	EqualTuple(t, NewPoint(15, 0, 7), result.MultiplyTuple(point))
+}
+
+func TestViewTransformDefaultOrientation(t *testing.T) {
+	from := NewPoint(0, 0, 0)
+	to := NewPoint(0, 0, -1)
+	up := NewVector(0, 1, 0)
+
+	transform := ViewTransform(from, to, up)
+
+	assert.Equal(t, NewIdentityMatrix(), transform)
+}
+
+func TestViewTransformLookingPositiveZDirection(t *testing.T) {
+	from := NewPoint(0, 0, 0)
+	to := NewPoint(0, 0, 1)
+	up := NewVector(0, 1, 0)
+
+	transform := ViewTransform(from, to, up)
+
+	assert.Equal(t, NewIdentityMatrix().Scale(-1, 1, -1), transform)
+}
+
+func TestViewTransformMovesWorld(t *testing.T) {
+	from := NewPoint(0, 0, 8)
+	to := NewPoint(0, 0, 0)
+	up := NewVector(0, 1, 0)
+
+	transform := ViewTransform(from, to, up)
+
+	assert.Equal(t, NewIdentityMatrix().Translate(0, 0, -8), transform)
+}
+
+func TestArbitraryViewTransform(t *testing.T) {
+	from := NewPoint(1, 3, 2)
+	to := NewPoint(4, -2, 8)
+	up := NewVector(1, 1, 0)
+
+	transform := ViewTransform(from, to, up)
+
+	result := NewMatrix(4, 4)
+	result[0] = []float64{-0.50709, 0.50709, 0.67612, -2.36643}
+	result[1] = []float64{0.76772, 0.60609, 0.12122, -2.82843}
+	result[2] = []float64{-0.35857, 0.59761, -0.71714, 0.00000}
+	result[3] = []float64{0.00000, 0.00000, 0.00000, 1.00000}
+
+	EqualMatrix(t, result, transform)
 }
