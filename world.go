@@ -18,8 +18,7 @@ func DefaultWorld() World {
 	world := World{}
 	world.light = &PointLight{NewPoint(-10, 10, -10), Color{1, 1, 1}}
 	world.objects = make([]Sphere, 0)
-	world.objects = append(world.objects, s1)
-	world.objects = append(world.objects, s2)
+	world.objects = append(world.objects, s1, s2)
 
 	return world
 }
@@ -47,10 +46,12 @@ func (world World) Intersect(ray Ray) []Intersection {
 }
 
 func (world World) ShadeHit(comps Comps) Color {
+	shadowed := world.IsShadowed(comps.overPoint)
+
 	return Lighting(
 		comps.object.material,
 		*world.light,
-		comps.point, comps.eyev, comps.normalv)
+		comps.point, comps.eyev, comps.normalv, shadowed)
 }
 
 func (world World) ColorAt(ray Ray) Color {
@@ -63,4 +64,20 @@ func (world World) ColorAt(ray Ray) Color {
 
 	comps := PrepareComputations(hit, ray)
 	return world.ShadeHit(comps)
+}
+
+func (world World) IsShadowed(point Tuple) bool {
+	vector := world.light.position.Subtract(point)
+	distance := vector.Magnitude()
+	direction := vector.Normalize()
+	ray := Ray{point, direction}
+
+	intersection := world.Intersect(ray)
+	hit, err := Hit(intersection)
+
+	if err == nil && hit.t < distance {
+		return true
+	}
+
+	return false
 }

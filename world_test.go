@@ -72,3 +72,32 @@ func TestColorWhenIntersectionBehindRay(t *testing.T) {
 
 	EqualColor(t, inner.material.color, color)
 }
+
+func TestShadeHitIntersectionInShadow(t *testing.T) {
+	s1 := NewSphere()
+	s2 := NewSphere()
+	s2.transform = s2.transform.Translate(0, 0, 10)
+
+	world := World{}
+	world.light = &PointLight{NewPoint(0, 0, -10), Color{1, 1, 1}}
+	world.objects = make([]Sphere, 0)
+	world.objects = append(world.objects, s1, s2)
+
+	ray := Ray{NewPoint(0, 0, 5), NewVector(0, 0, 1)}
+	intersection := Intersection{4, s2}
+	comps := PrepareComputations(intersection, ray)
+
+	EqualColor(t, Color{0.1, 0.1, 0.1}, world.ShadeHit(comps))
+}
+
+func TestHitOffsetsPoint(t *testing.T) {
+	const epsilon = 0.00001
+	ray := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
+	shape := NewSphere()
+	shape.transform = shape.transform.Translate(0, 0, 1)
+	intersection := Intersection{5, shape}
+	comps := PrepareComputations(intersection, ray)
+
+	assert.True(t, comps.overPoint.z < -epsilon/2)
+	assert.True(t, comps.point.z > comps.overPoint.z)
+}

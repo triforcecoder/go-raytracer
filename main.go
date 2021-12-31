@@ -101,7 +101,7 @@ func generateSphere() {
 				point := r.Position(hit.t)
 				normal := hit.object.NormalAt(point)
 				eye := r.direction.Multiply(-1)
-				color := Lighting(hit.object.material, light, point, eye, normal)
+				color := Lighting(hit.object.material, light, point, eye, normal, false)
 				canvas.WritePixel(x, y, color)
 			}
 		}

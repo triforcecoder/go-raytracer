@@ -2,12 +2,13 @@ package main
 
 // stores precomputed computations
 type Comps struct {
-	t       float64
-	object  Sphere
-	point   Tuple
-	eyev    Tuple
-	normalv Tuple
-	inside  bool
+	t         float64
+	object    Sphere
+	point     Tuple
+	eyev      Tuple
+	normalv   Tuple
+	inside    bool
+	overPoint Tuple
 }
 
 func PrepareComputations(intersection Intersection, ray Ray) Comps {
@@ -24,6 +25,9 @@ func PrepareComputations(intersection Intersection, ray Ray) Comps {
 		comps.inside = true
 		comps.normalv = comps.normalv.Multiply(-1)
 	}
+
+	const epsilon = 0.00001
+	comps.overPoint = comps.point.Add(comps.normalv.Multiply(epsilon))
 
 	return comps
 }
