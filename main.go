@@ -7,7 +7,64 @@ import (
 )
 
 func main() {
-	generateSphere()
+	generateScene()
+}
+
+func generateScene() {
+	floor := NewSphere()
+	floor.transform = floor.transform.Scale(10, 0.01, 10)
+	floor.material.color = Color{1, 0.9, 0.9}
+	floor.material.specular = 0
+
+	leftWall := NewSphere()
+	leftWall.transform = leftWall.transform.
+		Translate(0, 0, 5).
+		RotateY(-math.Pi/4).
+		RotateX(math.Pi/2).
+		Scale(10, 0.01, 10)
+	leftWall.material = floor.material
+
+	rightWall := NewSphere()
+	rightWall.transform = rightWall.transform.
+		Translate(0, 0, 5).
+		RotateY(math.Pi/4).
+		RotateX(math.Pi/2).
+		Scale(10, 0.01, 10)
+	rightWall.material = floor.material
+
+	middleSphere := NewSphere()
+	middleSphere.transform = middleSphere.transform.Translate(-0.5, 1, 0.5)
+	middleSphere.material.color = Color{0.1, 1, 0.5}
+	middleSphere.material.diffuse = 0.7
+	middleSphere.material.specular = 0.3
+
+	rightSphere := NewSphere()
+	rightSphere.transform = rightSphere.transform.
+		Translate(1.5, 0.5, -0.5).
+		Scale(0.5, 0.5, 0.5)
+	rightSphere.material.color = Color{0.5, 1, 0.1}
+	rightSphere.material.diffuse = 0.7
+	rightSphere.material.specular = 0.3
+
+	leftSphere := NewSphere()
+	leftSphere.transform = leftSphere.transform.
+		Translate(-1.5, 0.33, -0.75).
+		Scale(0.33, 0.33, 0.33)
+	leftSphere.material.color = Color{1, 0.8, 0.1}
+	leftSphere.material.diffuse = 0.7
+	leftSphere.material.specular = 0.3
+
+	world := World{}
+	world.light = &PointLight{NewPoint(-10, 10, -10), Color{1, 1, 1}}
+	world.objects = make([]Sphere, 0)
+	world.objects = append(world.objects, floor, leftWall, rightWall, middleSphere, rightSphere, leftSphere)
+
+	camera := NewCamera(1000, 500, math.Pi/3)
+	camera.transform = ViewTransform(NewPoint(0, 1.5, -5), NewPoint(0, 1, 0), NewVector(0, 1, 0))
+
+	canvas := camera.Render(world)
+
+	os.WriteFile("scene.ppm", []byte(canvas.ToPPM()), 0666)
 }
 
 func generateSphere() {
@@ -40,7 +97,7 @@ func generateSphere() {
 			xs := shape.Intersects(r)
 
 			hit, err := Hit(xs)
-			if err != nil {
+			if err == nil {
 				point := r.Position(hit.t)
 				normal := hit.object.NormalAt(point)
 				eye := r.direction.Multiply(-1)
