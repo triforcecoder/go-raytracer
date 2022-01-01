@@ -62,15 +62,17 @@ func TestColorWhenRayHits(t *testing.T) {
 
 func TestColorWhenIntersectionBehindRay(t *testing.T) {
 	world := DefaultWorld()
-	outer := &world.objects[0]
-	outer.material.ambient = 1
-	inner := &world.objects[1]
-	inner.material.ambient = 1
-	ray := Ray{NewPoint(0, 0, 0.75), NewVector(0, 0, -1)}
+	outerMaterial := world.objects[0].GetMaterial()
+	outerMaterial.ambient = 1
+	world.objects[0].SetMaterial(outerMaterial)
+	innerMaterial := world.objects[0].GetMaterial()
+	innerMaterial.ambient = 1
+	world.objects[1].SetMaterial(innerMaterial)
 
+	ray := Ray{NewPoint(0, 0, 0.75), NewVector(0, 0, -1)}
 	color := world.ColorAt(ray)
 
-	EqualColor(t, inner.material.color, color)
+	EqualColor(t, innerMaterial.color, color)
 }
 
 func TestShadeHitIntersectionInShadow(t *testing.T) {
@@ -80,7 +82,7 @@ func TestShadeHitIntersectionInShadow(t *testing.T) {
 
 	world := World{}
 	world.light = &PointLight{NewPoint(0, 0, -10), Color{1, 1, 1}}
-	world.objects = make([]Sphere, 0)
+	world.objects = make([]Shape, 0)
 	world.objects = append(world.objects, s1, s2)
 
 	ray := Ray{NewPoint(0, 0, 5), NewVector(0, 0, 1)}

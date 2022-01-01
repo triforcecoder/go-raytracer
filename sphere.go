@@ -8,11 +8,11 @@ type Sphere struct {
 	material  Material
 }
 
-func NewSphere() Sphere {
-	return Sphere{NewPoint(0, 0, 0), NewIdentityMatrix(), NewMaterial()}
+func NewSphere() *Sphere {
+	return &Sphere{NewPoint(0, 0, 0), NewIdentityMatrix(), NewMaterial()}
 }
 
-func (sphere Sphere) Intersects(ray Ray) []Intersection {
+func (sphere *Sphere) Intersects(ray Ray) []Intersection {
 	xs := []Intersection{}
 
 	ray = ray.Transform(sphere.transform.Inverse())
@@ -37,11 +37,19 @@ func (sphere Sphere) Intersects(ray Ray) []Intersection {
 	return xs
 }
 
-func (sphere Sphere) NormalAt(point Tuple) Tuple {
+func (sphere *Sphere) NormalAt(point Tuple) Tuple {
 	objectPoint := sphere.transform.Inverse().MultiplyTuple(point)
 	objectNormal := objectPoint.Subtract(sphere.origin)
 	worldNormal := sphere.transform.Inverse().Transpose().MultiplyTuple(objectNormal)
 	worldNormal.w = 0
 
 	return worldNormal.Normalize()
+}
+
+func (sphere *Sphere) GetMaterial() Material {
+	return sphere.material
+}
+
+func (sphere *Sphere) SetMaterial(material Material) {
+	sphere.material = material
 }

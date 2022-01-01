@@ -4,7 +4,7 @@ import "sort"
 
 type World struct {
 	light   *PointLight
-	objects []Sphere
+	objects []Shape
 }
 
 func DefaultWorld() World {
@@ -17,7 +17,7 @@ func DefaultWorld() World {
 
 	world := World{}
 	world.light = &PointLight{NewPoint(-10, 10, -10), Color{1, 1, 1}}
-	world.objects = make([]Sphere, 0)
+	world.objects = make([]Shape, 0)
 	world.objects = append(world.objects, s1, s2)
 
 	return world
@@ -49,7 +49,7 @@ func (world World) ShadeHit(comps Comps) Color {
 	shadowed := world.IsShadowed(comps.overPoint)
 
 	return Lighting(
-		comps.object.material,
+		comps.object.GetMaterial(),
 		*world.light,
 		comps.point, comps.eyev, comps.normalv, shadowed)
 }

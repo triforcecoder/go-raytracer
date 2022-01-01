@@ -4,10 +4,10 @@ import "errors"
 
 type Intersection struct {
 	t      float64
-	object Sphere
+	object Shape
 }
 
-func NewIntersection(t float64, s Sphere) Intersection {
+func NewIntersection(t float64, s Shape) Intersection {
 	return Intersection{t, s}
 }
 

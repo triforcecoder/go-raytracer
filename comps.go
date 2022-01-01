@@ -3,7 +3,7 @@ package main
 // stores precomputed computations
 type Comps struct {
 	t         float64
-	object    Sphere
+	object    Shape
 	point     Tuple
 	eyev      Tuple
 	normalv   Tuple
