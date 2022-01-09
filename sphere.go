@@ -3,19 +3,20 @@ package main
 import "math"
 
 type Sphere struct {
-	origin    Tuple
-	transform Matrix
-	material  Material
+	origin        Tuple
+	transform     Matrix
+	cachedInverse Matrix
+	material      Material
 }
 
 func NewSphere() *Sphere {
-	return &Sphere{NewPoint(0, 0, 0), NewIdentityMatrix(), NewMaterial()}
+	return &Sphere{NewPoint(0, 0, 0), NewIdentityMatrix(), nil, NewMaterial()}
 }
 
 func (sphere *Sphere) Intersects(ray Ray) []Intersection {
 	xs := []Intersection{}
 
-	ray = ray.Transform(sphere.transform.Inverse())
+	ray = ray.Transform(sphere.GetInverse())
 	sphereToRay := ray.origin.Subtract(sphere.origin)
 
 	a := ray.direction.Dot(ray.direction)
@@ -38,9 +39,9 @@ func (sphere *Sphere) Intersects(ray Ray) []Intersection {
 }
 
 func (sphere *Sphere) NormalAt(point Tuple) Tuple {
-	objectPoint := sphere.transform.Inverse().MultiplyTuple(point)
+	objectPoint := sphere.GetInverse().MultiplyTuple(point)
 	objectNormal := objectPoint.Subtract(sphere.origin)
-	worldNormal := sphere.transform.Inverse().Transpose().MultiplyTuple(objectNormal)
+	worldNormal := sphere.GetInverse().Transpose().MultiplyTuple(objectNormal)
 	worldNormal.w = 0
 
 	return worldNormal.Normalize()
@@ -56,4 +57,12 @@ func (sphere *Sphere) SetMaterial(material Material) {
 
 func (sphere *Sphere) GetTransform() Matrix {
 	return sphere.transform
+}
+
+func (sphere *Sphere) GetInverse() Matrix {
+	if sphere.cachedInverse == nil {
+		sphere.cachedInverse = sphere.transform.Inverse()
+	}
+
+	return sphere.cachedInverse
 }

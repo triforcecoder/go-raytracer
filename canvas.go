@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type Canvas struct {
@@ -28,9 +29,11 @@ func (canvas Canvas) ToPPM() string {
 	const maxCharPerLine = 70
 	const maxCharPixel = 5
 
-	header := fmt.Sprintf("P3\n%d %d\n255\n", canvas.width, canvas.height)
+	data := strings.Builder{}
 
-	data := ""
+	header := fmt.Sprintf("P3\n%d %d\n255\n", canvas.width, canvas.height)
+	data.WriteString(header)
+
 	for j := uint(0); j < canvas.height; j++ {
 		row := ""
 		for i := uint(0); i < canvas.width; i++ {
@@ -42,7 +45,7 @@ func (canvas Canvas) ToPPM() string {
 			for _, color := range pixel {
 				if len(row)+maxCharPixel > maxCharPerLine {
 					row += "\n"
-					data += row
+					data.WriteString(row)
 					row = ""
 				}
 
@@ -54,10 +57,10 @@ func (canvas Canvas) ToPPM() string {
 			}
 		}
 		row += "\n"
-		data += row
+		data.WriteString(row)
 	}
 
-	return header + data
+	return data.String()
 }
 
 // scale from float 0:1 to int 0:255

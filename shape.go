@@ -6,4 +6,5 @@ type Shape interface {
 	GetMaterial() Material
 	SetMaterial(material Material)
 	GetTransform() Matrix
+	GetInverse() Matrix
 }

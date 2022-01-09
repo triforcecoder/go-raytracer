@@ -102,7 +102,7 @@ func TestLightingWithSurfaceInShadow(t *testing.T) {
 func TestLightingWithPatternApplied(t *testing.T) {
 	pattern := NewStripePattern(white, black)
 	material := Material{}
-	material.pattern = &pattern
+	material.pattern = pattern
 	material.ambient = 1
 	material.diffuse = 0
 	material.specular = 0
