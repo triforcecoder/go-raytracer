@@ -48,5 +48,10 @@ func TestMultiplyColor(t *testing.T) {
 	color2 := Color{0.9, 1, 0.1}
 	result := Color{0.9, 0.2, 0.04}
 
-	assert.True(t, color1.Multiply(color2).Equals(result))
+	EqualColor(t, result, color1.Multiply(color2))
+}
+
+func TestConstantColors(t *testing.T) {
+	assert.Equal(t, Color{0, 0, 0}, black)
+	assert.Equal(t, Color{1, 1, 1}, white)
 }

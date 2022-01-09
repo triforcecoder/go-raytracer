@@ -53,3 +53,7 @@ func (sphere *Sphere) GetMaterial() Material {
 func (sphere *Sphere) SetMaterial(material Material) {
 	sphere.material = material
 }
+
+func (sphere *Sphere) GetTransform() Matrix {
+	return sphere.transform
+}

@@ -6,6 +6,9 @@ type Color struct {
 	blue  float64
 }
 
+var black = Color{0, 0, 0}
+var white = Color{1, 1, 1}
+
 func (color Color) Equals(other Color) bool {
 	return floatEquals(color.red, other.red) &&
 		floatEquals(color.green, other.green) &&

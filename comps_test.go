@@ -43,6 +43,19 @@ func TestHitWhenIntersectionInside(t *testing.T) {
 	assert.Equal(t, NewVector(0, 0, -1), comps.normalv)
 }
 
+func TestHitOffsetsPoint(t *testing.T) {
+	const epsilon = 0.00001
+	ray := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
+	shape := NewSphere()
+	shape.transform = shape.transform.Translate(0, 0, 1)
+	intersection := Intersection{5, shape}
+
+	comps := PrepareComputations(intersection, ray)
+
+	assert.True(t, comps.overPoint.z < -epsilon/2)
+	assert.True(t, comps.point.z > comps.overPoint.z)
+}
+
 func TestShadingIntersection(t *testing.T) {
 	world := DefaultWorld()
 	ray := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
@@ -57,7 +70,7 @@ func TestShadingIntersection(t *testing.T) {
 
 func TestShadingIntersectionFromInside(t *testing.T) {
 	world := DefaultWorld()
-	world.light = &PointLight{NewPoint(0, 0.25, 0), Color{1, 1, 1}}
+	world.light = &PointLight{NewPoint(0, 0.25, 0), white}
 	ray := Ray{NewPoint(0, 0, 0), NewVector(0, 0, 1)}
 	shape := world.objects[1]
 	i := NewIntersection(0.5, shape)

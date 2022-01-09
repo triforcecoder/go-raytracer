@@ -9,6 +9,7 @@ type PointLight struct {
 
 type Material struct {
 	color     Color
+	pattern   Pattern
 	ambient   float64
 	diffuse   float64
 	specular  float64
@@ -16,14 +17,21 @@ type Material struct {
 }
 
 func NewMaterial() Material {
-	return Material{Color{1, 1, 1}, 0.1, 0.9, 0.9, 200}
+	return Material{white, nil, 0.1, 0.9, 0.9, 200}
 }
 
-func Lighting(material Material, light PointLight, point Tuple, eyev Tuple, normalv Tuple, inShadow bool) Color {
+func Lighting(material Material, object Shape, light PointLight, point Tuple, eyev Tuple, normalv Tuple, inShadow bool) Color {
+	var color Color
 	var diffuse Color
 	var specular Color
 
-	effectiveColor := material.color.Multiply(light.intensity)
+	if material.pattern != nil {
+		color = PatternColor(material.pattern, object, point)
+	} else {
+		color = material.color
+	}
+
+	effectiveColor := color.Multiply(light.intensity)
 	lightv := light.position.Subtract(point).Normalize()
 	ambient := effectiveColor.MultiplyScalar(material.ambient)
 

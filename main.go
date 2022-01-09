@@ -13,6 +13,7 @@ func generateScene() {
 	floor := NewPlane()
 	floor.material.color = Color{0, 0, 1}
 	floor.material.ambient = 0.2
+	floor.material.pattern = NewCheckersPattern(black, Color{0, 0, 1})
 
 	leftSphere := NewSphere()
 	leftSphere.transform = leftSphere.transform.
@@ -37,7 +38,7 @@ func generateScene() {
 	rightSphere.material.specular = 0.3
 
 	world := World{}
-	world.light = &PointLight{NewPoint(-10, 10, -10), Color{1, 1, 1}}
+	world.light = &PointLight{NewPoint(-10, 10, -10), white}
 	world.objects = make([]Shape, 0)
 	world.objects = append(world.objects, floor, leftSphere, middleSphere, rightSphere)
 

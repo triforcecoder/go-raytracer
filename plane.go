@@ -38,3 +38,7 @@ func (plane *Plane) GetMaterial() Material {
 func (plane *Plane) SetMaterial(material Material) {
 	plane.material = material
 }
+
+func (plane *Plane) GetTransform() Matrix {
+	return plane.transform
+}

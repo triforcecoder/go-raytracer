@@ -16,7 +16,7 @@ func DefaultWorld() World {
 	s2.transform = s2.transform.Scale(0.5, 0.5, 0.5)
 
 	world := World{}
-	world.light = &PointLight{NewPoint(-10, 10, -10), Color{1, 1, 1}}
+	world.light = &PointLight{NewPoint(-10, 10, -10), white}
 	world.objects = make([]Shape, 0)
 	world.objects = append(world.objects, s1, s2)
 
@@ -50,6 +50,7 @@ func (world World) ShadeHit(comps Comps) Color {
 
 	return Lighting(
 		comps.object.GetMaterial(),
+		comps.object,
 		*world.light,
 		comps.point, comps.eyev, comps.normalv, shadowed)
 }
@@ -59,7 +60,7 @@ func (world World) ColorAt(ray Ray) Color {
 	hit, err := Hit(intersections)
 
 	if err != nil {
-		return Color{0, 0, 0}
+		return black
 	}
 
 	comps := PrepareComputations(hit, ray)

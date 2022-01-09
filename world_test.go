@@ -14,7 +14,7 @@ func TestNewWorld(t *testing.T) {
 }
 
 func TestDefaultWorld(t *testing.T) {
-	light := &PointLight{NewPoint(-10, 10, -10), Color{1, 1, 1}}
+	light := &PointLight{NewPoint(-10, 10, -10), white}
 	s1 := NewSphere()
 	s1.material.color = Color{0.8, 1.0, 0.6}
 	s1.material.diffuse = 0.7
@@ -48,7 +48,7 @@ func TestColorWhenRayMisses(t *testing.T) {
 
 	color := world.ColorAt(ray)
 
-	EqualColor(t, Color{0, 0, 0}, color)
+	EqualColor(t, black, color)
 }
 
 func TestColorWhenRayHits(t *testing.T) {
@@ -81,7 +81,7 @@ func TestShadeHitIntersectionInShadow(t *testing.T) {
 	s2.transform = s2.transform.Translate(0, 0, 10)
 
 	world := World{}
-	world.light = &PointLight{NewPoint(0, 0, -10), Color{1, 1, 1}}
+	world.light = &PointLight{NewPoint(0, 0, -10), white}
 	world.objects = make([]Shape, 0)
 	world.objects = append(world.objects, s1, s2)
 
@@ -92,14 +92,30 @@ func TestShadeHitIntersectionInShadow(t *testing.T) {
 	EqualColor(t, Color{0.1, 0.1, 0.1}, world.ShadeHit(comps))
 }
 
-func TestHitOffsetsPoint(t *testing.T) {
-	const epsilon = 0.00001
-	ray := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
-	shape := NewSphere()
-	shape.transform = shape.transform.Translate(0, 0, 1)
-	intersection := Intersection{5, shape}
-	comps := PrepareComputations(intersection, ray)
+func TestNoShadowWhenNothingCollinearWithPointAndLight(t *testing.T) {
+	world := DefaultWorld()
+	point := NewPoint(0, 10, 0)
 
-	assert.True(t, comps.overPoint.z < -epsilon/2)
-	assert.True(t, comps.point.z > comps.overPoint.z)
+	assert.Equal(t, false, world.IsShadowed(point))
+}
+
+func TestShadowWhenObjectBetweenPointAndLight(t *testing.T) {
+	world := DefaultWorld()
+	point := NewPoint(10, -10, 10)
+
+	assert.Equal(t, true, world.IsShadowed(point))
+}
+
+func TestNoShadowWhenObjectBehindLight(t *testing.T) {
+	world := DefaultWorld()
+	point := NewPoint(-20, 20, -20)
+
+	assert.Equal(t, false, world.IsShadowed(point))
+}
+
+func TestNoShadowWhenObjectBehindPoint(t *testing.T) {
+	world := DefaultWorld()
+	point := NewPoint(-2, 2, -2)
+
+	assert.Equal(t, false, world.IsShadowed(point))
 }

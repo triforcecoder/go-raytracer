@@ -5,4 +5,5 @@ type Shape interface {
 	Intersects(ray Ray) []Intersection
 	GetMaterial() Material
 	SetMaterial(material Material)
+	GetTransform() Matrix
 }
