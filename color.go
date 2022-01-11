@@ -8,6 +8,9 @@ type Color struct {
 
 var black = Color{0, 0, 0}
 var white = Color{1, 1, 1}
+var red = Color{1, 0, 0}
+var green = Color{0, 1, 0}
+var blue = Color{0, 0, 1}
 
 func (color Color) Equals(other Color) bool {
 	return floatEquals(color.red, other.red) &&

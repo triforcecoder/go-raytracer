@@ -7,15 +7,15 @@ import (
 )
 
 func TestCreateStripePattern(t *testing.T) {
-	pattern := NewStripePattern(white, black)
+	pattern := NewStripePattern(NewSolidPattern(white), NewSolidPattern(black))
 
-	assert.Equal(t, white, pattern.a)
-	assert.Equal(t, black, pattern.b)
+	assert.Equal(t, NewSolidPattern(white), pattern.a)
+	assert.Equal(t, NewSolidPattern(black), pattern.b)
 }
 
 func TestStripePatternConstantY(t *testing.T) {
 	object := NewSphere()
-	pattern := NewStripePattern(white, black)
+	pattern := NewStripePattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 1, 0)))
@@ -24,7 +24,7 @@ func TestStripePatternConstantY(t *testing.T) {
 
 func TestStripePatternConstantZ(t *testing.T) {
 	object := NewSphere()
-	pattern := NewStripePattern(white, black)
+	pattern := NewStripePattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 1)))
@@ -33,7 +33,7 @@ func TestStripePatternConstantZ(t *testing.T) {
 
 func TestStripePatternAlternatesX(t *testing.T) {
 	object := NewSphere()
-	pattern := NewStripePattern(white, black)
+	pattern := NewStripePattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0.9, 0, 0)))
@@ -46,14 +46,14 @@ func TestStripePatternAlternatesX(t *testing.T) {
 func TestStripeWithObjectTransformation(t *testing.T) {
 	object := NewSphere()
 	object.transform = object.transform.Scale(2, 2, 2)
-	pattern := NewStripePattern(white, black)
+	pattern := NewStripePattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(1.5, 0, 0)))
 }
 
 func TestStripeWithPatternTransformation(t *testing.T) {
 	object := NewSphere()
-	pattern := NewStripePattern(white, black)
+	pattern := NewStripePattern(NewSolidPattern(white), NewSolidPattern(black))
 	pattern.transform = pattern.transform.Scale(2, 2, 2)
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(1.5, 0, 0)))
@@ -62,7 +62,7 @@ func TestStripeWithPatternTransformation(t *testing.T) {
 func TestStripeWithObjectAndPatternTransformation(t *testing.T) {
 	object := NewSphere()
 	object.transform = object.transform.Scale(2, 2, 2)
-	pattern := NewStripePattern(white, black)
+	pattern := NewStripePattern(NewSolidPattern(white), NewSolidPattern(black))
 	pattern.transform = pattern.transform.Translate(0.5, 0, 0)
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(2.5, 0, 0)))
@@ -70,7 +70,7 @@ func TestStripeWithObjectAndPatternTransformation(t *testing.T) {
 
 func TestGradientLinearlyInterpolatesColors(t *testing.T) {
 	object := NewSphere()
-	pattern := NewGradientPattern(white, black)
+	pattern := NewGradientPattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, Color{0.75, 0.75, 0.75}, PatternColor(pattern, object, NewPoint(0.25, 0, 0)))
@@ -80,7 +80,7 @@ func TestGradientLinearlyInterpolatesColors(t *testing.T) {
 
 func TestRingExtendsBothXandZ(t *testing.T) {
 	object := NewSphere()
-	pattern := NewRingPattern(white, black)
+	pattern := NewRingPattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, black, PatternColor(pattern, object, NewPoint(1, 0, 0)))
@@ -91,7 +91,7 @@ func TestRingExtendsBothXandZ(t *testing.T) {
 
 func TestCheckersShouldRepeatInX(t *testing.T) {
 	object := NewSphere()
-	pattern := NewCheckersPattern(white, black)
+	pattern := NewCheckersPattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0.99, 0, 0)))
@@ -100,7 +100,7 @@ func TestCheckersShouldRepeatInX(t *testing.T) {
 
 func TestCheckersShouldRepeatInY(t *testing.T) {
 	object := NewSphere()
-	pattern := NewCheckersPattern(white, black)
+	pattern := NewCheckersPattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0.99, 0)))
@@ -109,7 +109,7 @@ func TestCheckersShouldRepeatInY(t *testing.T) {
 
 func TestCheckersShouldRepeatInZ(t *testing.T) {
 	object := NewSphere()
-	pattern := NewCheckersPattern(white, black)
+	pattern := NewCheckersPattern(NewSolidPattern(white), NewSolidPattern(black))
 
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0)))
 	assert.Equal(t, white, PatternColor(pattern, object, NewPoint(0, 0, 0.99)))
