@@ -13,6 +13,10 @@ type PatternImpl struct {
 	cachedInverse Matrix
 }
 
+type TestPattern struct {
+	PatternImpl
+}
+
 type SolidPattern struct {
 	c Color
 	PatternImpl
@@ -40,6 +44,10 @@ type CheckersPattern struct {
 	a Pattern
 	b Pattern
 	PatternImpl
+}
+
+func NewTestPattern() *TestPattern {
+	return &TestPattern{PatternImpl{NewIdentityMatrix(), nil}}
 }
 
 func NewSolidPattern(c Color) *SolidPattern {
@@ -79,6 +87,10 @@ func (pattern *PatternImpl) GetInverse() Matrix {
 	}
 
 	return pattern.cachedInverse
+}
+
+func (pattern *TestPattern) ColorAt(point Tuple) Color {
+	return Color{point.x, point.y, point.z}
 }
 
 func (pattern *SolidPattern) ColorAt(point Tuple) Color {

@@ -8,16 +8,19 @@ type PointLight struct {
 }
 
 type Material struct {
-	color     Color
-	pattern   Pattern
-	ambient   float64
-	diffuse   float64
-	specular  float64
-	shininess float64
+	color           Color
+	pattern         Pattern
+	ambient         float64
+	diffuse         float64
+	specular        float64
+	shininess       float64
+	reflective      float64
+	transparency    float64
+	refractiveIndex float64
 }
 
 func NewMaterial() Material {
-	return Material{white, nil, 0.1, 0.9, 0.9, 200}
+	return Material{white, nil, 0.1, 0.9, 0.9, 200, 0, 0, 1}
 }
 
 func Lighting(material Material, object Shape, light PointLight, point Tuple, eyev Tuple, normalv Tuple, inShadow bool) Color {

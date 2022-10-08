@@ -58,7 +58,7 @@ func (camera *Camera) Render(world World) Canvas {
 	for y := uint(0); y < camera.vsize; y++ {
 		for x := uint(0); x < camera.hsize; x++ {
 			ray := camera.RayForPixel(x, y)
-			color := world.ColorAt(ray)
+			color := world.ColorAt(ray, 4)
 			image.WritePixel(x, y, color)
 		}
 	}

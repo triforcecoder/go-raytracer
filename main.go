@@ -31,41 +31,45 @@ func generateScene() {
 	}
 
 	floor := NewPlane()
+	floor.transform = floor.transform.Translate(1, 1, -2)
 	floor.material.color = blue
 	floor.material.ambient = 0.2
 	floor.material.pattern = NewCheckersPattern(
 		NewSolidPattern(black), NewGradientPattern(
 			NewSolidPattern(green),
 			NewSolidPattern(blue)))
-
-	leftSphere := NewSphere()
-	leftSphere.transform = leftSphere.transform.
-		Translate(-1.5, 0.33, -0.75).
-		Scale(0.33, 0.33, 0.33)
-	leftSphere.material.color = Color{1, 0, 0.1}
-	leftSphere.material.diffuse = 0.7
-	leftSphere.material.specular = 0.3
+	floor.material.reflective = 0.5
+	floor.material.transparency = 0.2
+	floor.material.refractiveIndex = 4.5
 
 	middleSphere := NewSphere()
 	middleSphere.transform = middleSphere.transform.
-		Translate(-0.5, 1, 0.5).
+		Translate(-0.5, 1.5, 0.5).
 		Scale(0.8, 0.8, 0.8)
 	middleSphere.material.color = Color{0.1, 1, 0.1}
 	middleSphere.material.diffuse = 0.7
 	middleSphere.material.specular = 0.3
-	middleSpherePattern := NewStripePattern(
+	middleSphere.material.ambient = 0.3
+	middleSphere.material.transparency = 0.5
+	middleSphere.material.refractiveIndex = 0
+	middleSpherePattern := NewGradientPattern(
 		NewSolidPattern(red), NewSolidPattern(blue))
-	middleSpherePattern.transform = middleSpherePattern.transform.
-		RotateZ(math.Pi / 4)
+	middleSpherePattern.transform = middleSphere.transform.
+		RotateX(math.Pi / 4).
+		RotateY(math.Pi / 4).
+		RotateZ(math.Pi)
 	middleSphere.material.pattern = middleSpherePattern
 
 	rightSphere := NewSphere()
 	rightSphere.transform = rightSphere.transform.
-		Translate(1.5, 0.5, -0.5).
+		Translate(1.5, 1.5, -0.5).
 		Scale(0.5, 0.5, 0.5)
 	rightSphere.material.color = Color{1, 0.2, 1}
 	rightSphere.material.diffuse = 0.7
 	rightSphere.material.specular = 0.3
+	rightSphere.material.reflective = 0.5
+	rightSphere.material.transparency = 0.5
+	rightSphere.material.refractiveIndex = 1.5
 	rightSpherePattern := NewGradientPattern(
 		NewSolidPattern(red), NewSolidPattern(blue))
 	rightSpherePattern.transform = rightSphere.transform.
@@ -76,14 +80,14 @@ func generateScene() {
 	world := World{}
 	world.light = &PointLight{NewPoint(-10, 10, -10), white}
 	world.objects = make([]Shape, 0)
-	world.objects = append(world.objects, floor, leftSphere, middleSphere, rightSphere)
+	world.objects = append(world.objects, floor, middleSphere, rightSphere)
 
 	camera := NewCamera(2000, 1000, math.Pi/3)
 	camera.transform = ViewTransform(NewPoint(0, 1.5, -5), NewPoint(0, 1, 0), NewVector(0, 1, 0))
 
 	canvas := camera.Render(world)
 
-	os.WriteFile("scene.ppm", []byte(canvas.ToPPM()), 0666)
+	os.WriteFile("render/scene.ppm", []byte(canvas.ToPPM()), 0666)
 
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)

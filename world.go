@@ -1,6 +1,9 @@
 package main
 
-import "sort"
+import (
+	"math"
+	"sort"
+)
 
 type World struct {
 	light   *PointLight
@@ -45,17 +48,30 @@ func (world World) Intersect(ray Ray) []Intersection {
 	return intersections
 }
 
-func (world World) ShadeHit(comps Comps) Color {
+func (world World) ShadeHit(comps Comps, remaining uint) Color {
 	shadowed := world.IsShadowed(comps.overPoint)
 
-	return Lighting(
+	surface := Lighting(
 		comps.object.GetMaterial(),
 		comps.object,
 		*world.light,
 		comps.point, comps.eyev, comps.normalv, shadowed)
+
+	reflected := world.ReflectedColor(comps, remaining)
+	refracted := world.RefractedColor(comps, remaining)
+
+	material := comps.object.GetMaterial()
+	if material.reflective > 0 && material.transparency > 0 {
+		reflectance := comps.Schlick()
+		return surface.Add(
+			reflected.MultiplyScalar(reflectance)).Add(
+			refracted.MultiplyScalar(1 - reflectance))
+	}
+
+	return surface.Add(reflected).Add(refracted)
 }
 
-func (world World) ColorAt(ray Ray) Color {
+func (world World) ColorAt(ray Ray, remaining uint) Color {
 	intersections := world.Intersect(ray)
 	hit, err := Hit(intersections)
 
@@ -63,8 +79,8 @@ func (world World) ColorAt(ray Ray) Color {
 		return black
 	}
 
-	comps := PrepareComputations(hit, ray)
-	return world.ShadeHit(comps)
+	comps := PrepareComputations(hit, ray, intersections)
+	return world.ShadeHit(comps, remaining)
 }
 
 func (world World) IsShadowed(point Tuple) bool {
@@ -81,4 +97,37 @@ func (world World) IsShadowed(point Tuple) bool {
 	}
 
 	return false
+}
+
+func (world World) ReflectedColor(comps Comps, remaining uint) Color {
+	if remaining == 0 || comps.object.GetMaterial().reflective == 0 {
+		return black
+	}
+
+	reflectRay := Ray{comps.overPoint, comps.reflectv}
+	color := world.ColorAt(reflectRay, remaining-1)
+
+	return color.MultiplyScalar(comps.object.GetMaterial().reflective)
+}
+
+func (world World) RefractedColor(comps Comps, remaining uint) Color {
+	if remaining == 0 || comps.object.GetMaterial().transparency == 0 {
+		return black
+	}
+
+	nRatio := comps.n1 / comps.n2
+	cosI := comps.eyev.Dot(comps.normalv)
+	sin2T := math.Pow(nRatio, 2) * (1 - math.Pow(cosI, 2))
+
+	if sin2T > 1 {
+		// total internal reflection
+		return black
+	}
+
+	cosT := math.Sqrt(1.0 - sin2T)
+	direction := comps.normalv.Multiply(nRatio*cosI - cosT).Subtract(comps.eyev.Multiply(nRatio))
+	refractRay := Ray{comps.underPoint, direction}
+	color := world.ColorAt(refractRay, remaining-1).MultiplyScalar(comps.object.GetMaterial().transparency)
+
+	return color
 }

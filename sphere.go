@@ -13,6 +13,14 @@ func NewSphere() *Sphere {
 	return &Sphere{NewPoint(0, 0, 0), NewIdentityMatrix(), nil, NewMaterial()}
 }
 
+func NewGlassSphere() *Sphere {
+	sphere := Sphere{NewPoint(0, 0, 0), NewIdentityMatrix(), nil, NewMaterial()}
+	sphere.material.transparency = 1
+	sphere.material.refractiveIndex = 1.5
+
+	return &sphere
+}
+
 func (sphere *Sphere) Intersects(ray Ray) []Intersection {
 	xs := []Intersection{}
 
