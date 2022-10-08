@@ -1,4 +1,8 @@
-package main
+package geometry
+
+import (
+	. "go-raytracer/core"
+)
 
 type Shape interface {
 	NormalAt(point Tuple) Tuple

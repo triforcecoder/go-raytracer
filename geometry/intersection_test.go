@@ -1,4 +1,4 @@
-package main
+package geometry
 
 import (
 	"testing"
@@ -10,8 +10,8 @@ func TestIntersection(t *testing.T) {
 	s := NewSphere()
 	i := NewIntersection(3.5, s)
 
-	assert.Equal(t, 3.5, i.t)
-	assert.Equal(t, s, i.object)
+	assert.Equal(t, 3.5, i.T)
+	assert.Equal(t, s, i.Object)
 }
 
 func TestIntersectionCollection(t *testing.T) {
@@ -21,8 +21,8 @@ func TestIntersectionCollection(t *testing.T) {
 
 	xs := []Intersection{i1, i2}
 
-	assert.Equal(t, 1.0, xs[0].t)
-	assert.Equal(t, 2.0, xs[1].t)
+	assert.Equal(t, 1.0, xs[0].T)
+	assert.Equal(t, 2.0, xs[1].T)
 }
 
 func TestHitAllIntersectionsPositive(t *testing.T) {

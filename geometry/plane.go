@@ -1,12 +1,15 @@
-package main
+package geometry
 
-import "math"
+import (
+	. "go-raytracer/core"
+	"math"
+)
 
 type Plane struct {
 	origin        Tuple
-	transform     Matrix
+	Transform     Matrix
 	cachedInverse Matrix
-	material      Material
+	Material      Material
 }
 
 func NewPlane() *Plane {
@@ -23,30 +26,30 @@ func (plane *Plane) Intersects(ray Ray) []Intersection {
 	ray = ray.Transform(plane.GetInverse())
 
 	const epsilon = 0.00001
-	if math.Abs(ray.direction.y) < epsilon {
+	if math.Abs(ray.Direction.Y) < epsilon {
 		return xs
 	}
 
-	t := -ray.origin.y / ray.direction.y
-	xs = append(xs, Intersection{t, plane})
+	t := -ray.Origin.Y / ray.Direction.Y
+	xs = append(xs, NewIntersection(t, plane))
 	return xs
 }
 
 func (plane *Plane) GetMaterial() Material {
-	return plane.material
+	return plane.Material
 }
 
 func (plane *Plane) SetMaterial(material Material) {
-	plane.material = material
+	plane.Material = material
 }
 
 func (plane *Plane) GetTransform() Matrix {
-	return plane.transform
+	return plane.Transform
 }
 
 func (plane *Plane) GetInverse() Matrix {
 	if plane.cachedInverse == nil {
-		plane.cachedInverse = plane.transform.Inverse()
+		plane.cachedInverse = plane.Transform.Inverse()
 	}
 
 	return plane.cachedInverse

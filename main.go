@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	. "go-raytracer/core"
+	. "go-raytracer/geometry"
+	. "go-raytracer/physics"
 	"log"
 	"math"
 	"os"
@@ -31,59 +34,59 @@ func generateScene() {
 	}
 
 	floor := NewPlane()
-	floor.transform = floor.transform.Translate(1, 1, -2)
-	floor.material.color = blue
-	floor.material.ambient = 0.2
-	floor.material.pattern = NewCheckersPattern(
-		NewSolidPattern(black), NewGradientPattern(
-			NewSolidPattern(green),
-			NewSolidPattern(blue)))
-	floor.material.reflective = 0.5
-	floor.material.transparency = 0.2
-	floor.material.refractiveIndex = 4.5
+	floor.Transform = floor.Transform.Translate(1, 1, -2)
+	floor.Material.Color = Blue
+	floor.Material.Ambient = 0.2
+	floor.Material.Pattern = NewCheckersPattern(
+		NewSolidPattern(Black), NewGradientPattern(
+			NewSolidPattern(Green),
+			NewSolidPattern(Blue)))
+	floor.Material.Reflective = 0.5
+	floor.Material.Transparency = 0.2
+	floor.Material.RefractiveIndex = 4.5
 
 	middleSphere := NewSphere()
-	middleSphere.transform = middleSphere.transform.
+	middleSphere.Transform = middleSphere.Transform.
 		Translate(-0.5, 1.5, 0.5).
 		Scale(0.8, 0.8, 0.8)
-	middleSphere.material.color = Color{0.1, 1, 0.1}
-	middleSphere.material.diffuse = 0.7
-	middleSphere.material.specular = 0.3
-	middleSphere.material.ambient = 0.3
-	middleSphere.material.transparency = 0.5
-	middleSphere.material.refractiveIndex = 0
+	middleSphere.Material.Color = NewColor(0.1, 1, 0.1)
+	middleSphere.Material.Diffuse = 0.7
+	middleSphere.Material.Specular = 0.3
+	middleSphere.Material.Ambient = 0.3
+	middleSphere.Material.Transparency = 0.5
+	middleSphere.Material.RefractiveIndex = 0
 	middleSpherePattern := NewGradientPattern(
-		NewSolidPattern(red), NewSolidPattern(blue))
-	middleSpherePattern.transform = middleSphere.transform.
+		NewSolidPattern(Red), NewSolidPattern(Blue))
+	middleSpherePattern.Transform = middleSpherePattern.Transform.
 		RotateX(math.Pi / 4).
 		RotateY(math.Pi / 4).
 		RotateZ(math.Pi)
-	middleSphere.material.pattern = middleSpherePattern
+	middleSphere.Material.Pattern = middleSpherePattern
 
 	rightSphere := NewSphere()
-	rightSphere.transform = rightSphere.transform.
+	rightSphere.Transform = rightSphere.Transform.
 		Translate(1.5, 1.5, -0.5).
 		Scale(0.5, 0.5, 0.5)
-	rightSphere.material.color = Color{1, 0.2, 1}
-	rightSphere.material.diffuse = 0.7
-	rightSphere.material.specular = 0.3
-	rightSphere.material.reflective = 0.5
-	rightSphere.material.transparency = 0.5
-	rightSphere.material.refractiveIndex = 1.5
+	rightSphere.Material.Color = NewColor(1, 0.2, 1)
+	rightSphere.Material.Diffuse = 0.7
+	rightSphere.Material.Specular = 0.3
+	rightSphere.Material.Reflective = 0.5
+	rightSphere.Material.Transparency = 0.5
+	rightSphere.Material.RefractiveIndex = 1.5
 	rightSpherePattern := NewGradientPattern(
-		NewSolidPattern(red), NewSolidPattern(blue))
-	rightSpherePattern.transform = rightSphere.transform.
+		NewSolidPattern(Red), NewSolidPattern(Blue))
+	rightSpherePattern.Transform = rightSphere.Transform.
 		RotateX(math.Pi / 2).
 		RotateZ(math.Pi / 4)
-	rightSphere.material.pattern = rightSpherePattern
+	rightSphere.Material.Pattern = rightSpherePattern
 
 	world := World{}
-	world.light = &PointLight{NewPoint(-10, 10, -10), white}
-	world.objects = make([]Shape, 0)
-	world.objects = append(world.objects, floor, middleSphere, rightSphere)
+	world.Light = NewPointLight(NewPoint(-10, 10, -10), White)
+	world.Objects = make([]Shape, 0)
+	world.Objects = append(world.Objects, floor, middleSphere, rightSphere)
 
 	camera := NewCamera(2000, 1000, math.Pi/3)
-	camera.transform = ViewTransform(NewPoint(0, 1.5, -5), NewPoint(0, 1, 0), NewVector(0, 1, 0))
+	camera.Transform = ViewTransform(NewPoint(0, 1.5, -5), NewPoint(0, 1, 0), NewVector(0, 1, 0))
 
 	canvas := camera.Render(world)
 

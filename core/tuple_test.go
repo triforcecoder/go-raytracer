@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"math"
@@ -28,8 +28,8 @@ func TestTupleIsVector(t *testing.T) {
 }
 
 func TestFloatEqual(t *testing.T) {
-	assert.False(t, floatEquals(1, 1.01))
-	assert.True(t, floatEquals(1, 1.000001))
+	assert.False(t, FloatEquals(1, 1.01))
+	assert.True(t, FloatEquals(1, 1.000001))
 }
 
 func TestTupleEquals(t *testing.T) {

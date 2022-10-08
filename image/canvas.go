@@ -1,7 +1,8 @@
-package main
+package image
 
 import (
 	"fmt"
+	. "go-raytracer/core"
 	"strconv"
 	"strings"
 )
@@ -9,7 +10,7 @@ import (
 type Canvas struct {
 	width  uint
 	height uint
-	pixel  [][]Color
+	Pixel  [][]Color
 }
 
 func NewCanvas(width, height uint) Canvas {
@@ -22,7 +23,7 @@ func NewCanvas(width, height uint) Canvas {
 }
 
 func (canvas Canvas) WritePixel(x, y uint, color Color) {
-	canvas.pixel[x][y] = color
+	canvas.Pixel[x][y] = color
 }
 
 func (canvas Canvas) ToPPM() string {
@@ -38,9 +39,9 @@ func (canvas Canvas) ToPPM() string {
 		row := ""
 		for i := uint(0); i < canvas.width; i++ {
 			pixel := []string{
-				strconv.Itoa(scaleFloat(canvas.pixel[i][j].red)),
-				strconv.Itoa(scaleFloat(canvas.pixel[i][j].green)),
-				strconv.Itoa(scaleFloat(canvas.pixel[i][j].blue))}
+				strconv.Itoa(scaleFloat(canvas.Pixel[i][j].Red)),
+				strconv.Itoa(scaleFloat(canvas.Pixel[i][j].Green)),
+				strconv.Itoa(scaleFloat(canvas.Pixel[i][j].Blue))}
 
 			for _, color := range pixel {
 				if len(row)+maxCharPixel > maxCharPerLine {

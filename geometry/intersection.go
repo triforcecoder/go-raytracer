@@ -1,10 +1,12 @@
-package main
+package geometry
 
-import "errors"
+import (
+	"errors"
+)
 
 type Intersection struct {
-	t      float64
-	object Shape
+	T      float64
+	Object Shape
 }
 
 func NewIntersection(t float64, s Shape) Intersection {
@@ -16,11 +18,11 @@ func Hit(intersections []Intersection) (Intersection, error) {
 	var found bool
 
 	for _, intersection := range intersections {
-		if intersection.t > 0 {
+		if intersection.T > 0 {
 			if !found {
 				x = intersection
 				found = true
-			} else if intersection.t < x.t {
+			} else if intersection.T < x.T {
 				x = intersection
 			}
 		}

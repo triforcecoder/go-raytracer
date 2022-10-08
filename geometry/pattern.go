@@ -1,6 +1,9 @@
-package main
+package geometry
 
-import "math"
+import (
+	. "go-raytracer/core"
+	"math"
+)
 
 type Pattern interface {
 	ColorAt(point Tuple) Color
@@ -9,7 +12,7 @@ type Pattern interface {
 }
 
 type PatternImpl struct {
-	transform     Matrix
+	Transform     Matrix
 	cachedInverse Matrix
 }
 
@@ -78,19 +81,19 @@ func PatternColor(pattern Pattern, object Shape, worldPoint Tuple) Color {
 }
 
 func (pattern *PatternImpl) GetTransform() Matrix {
-	return pattern.transform
+	return pattern.Transform
 }
 
 func (pattern *PatternImpl) GetInverse() Matrix {
 	if pattern.cachedInverse == nil {
-		pattern.cachedInverse = pattern.transform.Inverse()
+		pattern.cachedInverse = pattern.Transform.Inverse()
 	}
 
 	return pattern.cachedInverse
 }
 
 func (pattern *TestPattern) ColorAt(point Tuple) Color {
-	return Color{point.x, point.y, point.z}
+	return NewColor(point.X, point.Y, point.Z)
 }
 
 func (pattern *SolidPattern) ColorAt(point Tuple) Color {
@@ -98,7 +101,7 @@ func (pattern *SolidPattern) ColorAt(point Tuple) Color {
 }
 
 func (pattern *StripePattern) ColorAt(point Tuple) Color {
-	if int(math.Floor(point.x))%2 == 0 {
+	if int(math.Floor(point.X))%2 == 0 {
 		return pattern.a.ColorAt(point)
 	} else {
 		return pattern.b.ColorAt(point)
@@ -107,13 +110,13 @@ func (pattern *StripePattern) ColorAt(point Tuple) Color {
 
 func (pattern *GradientPattern) ColorAt(point Tuple) Color {
 	distance := pattern.b.ColorAt(point).Subtract(pattern.a.ColorAt(point))
-	fraction := point.x - math.Floor(point.x)
+	fraction := point.X - math.Floor(point.X)
 
 	return pattern.a.ColorAt(point).Add(distance.MultiplyScalar(fraction))
 }
 
 func (pattern *RingPattern) ColorAt(point Tuple) Color {
-	if int(math.Floor(math.Sqrt(math.Pow(point.x, 2)+math.Pow(point.z, 2))))%2 == 0 {
+	if int(math.Floor(math.Sqrt(math.Pow(point.X, 2)+math.Pow(point.Z, 2))))%2 == 0 {
 		return pattern.a.ColorAt(point)
 	} else {
 		return pattern.b.ColorAt(point)
@@ -121,7 +124,7 @@ func (pattern *RingPattern) ColorAt(point Tuple) Color {
 }
 
 func (pattern *CheckersPattern) ColorAt(point Tuple) Color {
-	if int(math.Abs(point.x)+math.Abs(point.y)+math.Abs(point.z))%2 == 0 {
+	if int(math.Abs(point.X)+math.Abs(point.Y)+math.Abs(point.Z))%2 == 0 {
 		return pattern.a.ColorAt(point)
 	} else {
 		return pattern.b.ColorAt(point)

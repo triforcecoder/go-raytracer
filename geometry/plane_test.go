@@ -1,6 +1,7 @@
-package main
+package geometry
 
 import (
+	. "go-raytracer/core"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,8 +43,8 @@ func TestRayIntersectsPlaneFromAbove(t *testing.T) {
 	xs := plane.Intersects(ray)
 
 	assert.Equal(t, 1, len(xs))
-	assert.Equal(t, 1.0, xs[0].t)
-	assert.Equal(t, plane, xs[0].object)
+	assert.Equal(t, 1.0, xs[0].T)
+	assert.Equal(t, plane, xs[0].Object)
 }
 
 func TestRayIntersectsPlaneFromBelow(t *testing.T) {
@@ -53,6 +54,6 @@ func TestRayIntersectsPlaneFromBelow(t *testing.T) {
 	xs := plane.Intersects(ray)
 
 	assert.Equal(t, 1, len(xs))
-	assert.Equal(t, 1.0, xs[0].t)
-	assert.Equal(t, plane, xs[0].object)
+	assert.Equal(t, 1.0, xs[0].T)
+	assert.Equal(t, plane, xs[0].Object)
 }

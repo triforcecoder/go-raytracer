@@ -1,4 +1,4 @@
-package main
+package core
 
 import "math"
 
@@ -30,12 +30,12 @@ func ViewTransform(from Tuple, to Tuple, up Tuple) Matrix {
 	left := forward.Cross(upn)
 	trueUp := left.Cross(forward)
 	orientation := NewMatrix(4, 4)
-	orientation[0] = []float64{left.x, left.y, left.z, 0}
-	orientation[1] = []float64{trueUp.x, trueUp.y, trueUp.z, 0}
-	orientation[2] = []float64{-forward.x, -forward.y, -forward.z, 0}
+	orientation[0] = []float64{left.X, left.Y, left.Z, 0}
+	orientation[1] = []float64{trueUp.X, trueUp.Y, trueUp.Z, 0}
+	orientation[2] = []float64{-forward.X, -forward.Y, -forward.Z, 0}
 	orientation[3] = []float64{0, 0, 0, 1}
 
-	return orientation.Translate(-from.x, -from.y, -from.z)
+	return orientation.Translate(-from.X, -from.Y, -from.Z)
 }
 
 func (matrix Matrix) Equals(other Matrix) bool {
@@ -51,7 +51,7 @@ func (matrix Matrix) Equals(other Matrix) bool {
 
 	for row := range matrix {
 		for col := range matrix[row] {
-			if !floatEquals(matrix[row][col], other[row][col]) {
+			if !FloatEquals(matrix[row][col], other[row][col]) {
 				return false
 			}
 		}
@@ -84,10 +84,10 @@ func (matrix Matrix) MultiplyTuple(tuple Tuple) Tuple {
 	for i := 0; i < 4; i++ {
 		elem := 0.0
 
-		elem += matrix[i][0] * tuple.x
-		elem += matrix[i][1] * tuple.y
-		elem += matrix[i][2] * tuple.z
-		elem += matrix[i][3] * tuple.w
+		elem += matrix[i][0] * tuple.X
+		elem += matrix[i][1] * tuple.Y
+		elem += matrix[i][2] * tuple.Z
+		elem += matrix[i][3] * tuple.W
 
 		result[i] = elem
 	}

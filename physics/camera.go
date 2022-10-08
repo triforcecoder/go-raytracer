@@ -1,12 +1,16 @@
-package main
+package physics
 
-import "math"
+import (
+	. "go-raytracer/core"
+	. "go-raytracer/image"
+	"math"
+)
 
 type Camera struct {
 	hsize         uint
 	vsize         uint
 	fieldOfView   float64
-	transform     Matrix
+	Transform     Matrix
 	cachedInverse Matrix
 	pixelSize     float64
 	halfWidth     float64
@@ -36,7 +40,7 @@ func NewCamera(hsize uint, vsize uint, fieldOfView float64) Camera {
 
 func (camera *Camera) RayForPixel(px uint, py uint) Ray {
 	if camera.cachedInverse == nil {
-		camera.cachedInverse = camera.transform.Inverse()
+		camera.cachedInverse = camera.Transform.Inverse()
 	}
 
 	xoffset := (float64(px) + 0.5) * camera.pixelSize
@@ -49,7 +53,7 @@ func (camera *Camera) RayForPixel(px uint, py uint) Ray {
 	origin := camera.cachedInverse.MultiplyTuple(NewPoint(0, 0, 0))
 	direction := pixel.Subtract(origin).Normalize()
 
-	return Ray{origin, direction}
+	return NewRay(origin, direction)
 }
 
 func (camera *Camera) Render(world World) Canvas {

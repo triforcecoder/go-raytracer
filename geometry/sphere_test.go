@@ -1,11 +1,20 @@
-package main
+package geometry
 
 import (
+	. "go-raytracer/core"
 	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func EqualTuple(t *testing.T, expected Tuple, actual Tuple) {
+	if expected.Equals(actual) {
+		assert.True(t, true)
+	} else {
+		assert.Equal(t, expected, actual)
+	}
+}
 
 func TestIntersectsSphereAtTwoPoints(t *testing.T) {
 	origin := NewPoint(0, 0, -5)
@@ -16,8 +25,8 @@ func TestIntersectsSphereAtTwoPoints(t *testing.T) {
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 2, len(xs))
-	assert.Equal(t, 4.0, xs[0].t)
-	assert.Equal(t, 6.0, xs[1].t)
+	assert.Equal(t, 4.0, xs[0].T)
+	assert.Equal(t, 6.0, xs[1].T)
 }
 
 func TestIntersectsSphereAtTangent(t *testing.T) {
@@ -29,8 +38,8 @@ func TestIntersectsSphereAtTangent(t *testing.T) {
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 2, len(xs))
-	assert.Equal(t, 5.0, xs[0].t)
-	assert.Equal(t, 5.0, xs[1].t)
+	assert.Equal(t, 5.0, xs[0].T)
+	assert.Equal(t, 5.0, xs[1].T)
 }
 
 func TestMissesSphere(t *testing.T) {
@@ -53,8 +62,8 @@ func TestRayOriginInsideSphere(t *testing.T) {
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 2, len(xs))
-	assert.Equal(t, -1.0, xs[0].t)
-	assert.Equal(t, 1.0, xs[1].t)
+	assert.Equal(t, -1.0, xs[0].T)
+	assert.Equal(t, 1.0, xs[1].T)
 }
 
 func TestSphereBehindRay(t *testing.T) {
@@ -66,8 +75,8 @@ func TestSphereBehindRay(t *testing.T) {
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 2, len(xs))
-	assert.Equal(t, -6.0, xs[0].t)
-	assert.Equal(t, -4.0, xs[1].t)
+	assert.Equal(t, -6.0, xs[0].T)
+	assert.Equal(t, -4.0, xs[1].T)
 }
 
 func TestIntersectSetsObject(t *testing.T) {
@@ -79,42 +88,42 @@ func TestIntersectSetsObject(t *testing.T) {
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 2, len(xs))
-	assert.Equal(t, s, xs[0].object)
-	assert.Equal(t, s, xs[1].object)
+	assert.Equal(t, s, xs[0].Object)
+	assert.Equal(t, s, xs[1].Object)
 }
 
 func TestSphereDefaultTransformation(t *testing.T) {
 	s := NewSphere()
 
-	assert.Equal(t, NewIdentityMatrix(), s.transform)
+	assert.Equal(t, NewIdentityMatrix(), s.Transform)
 }
 
 func TestChangeSphereTransformation(t *testing.T) {
 	s := NewSphere()
 	transform := NewIdentityMatrix().Translate(2, 3, 4)
 
-	s.transform = transform
+	s.Transform = transform
 
-	assert.Equal(t, transform, s.transform)
+	assert.Equal(t, transform, s.Transform)
 }
 
 func TestIntersectingScaledSphereWithRay(t *testing.T) {
 	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
 	s := NewSphere()
 
-	s.transform = NewIdentityMatrix().Scale(2, 2, 2)
+	s.Transform = NewIdentityMatrix().Scale(2, 2, 2)
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 2, len(xs))
-	assert.Equal(t, 3.0, xs[0].t)
-	assert.Equal(t, 7.0, xs[1].t)
+	assert.Equal(t, 3.0, xs[0].T)
+	assert.Equal(t, 7.0, xs[1].T)
 }
 
 func TestIntersectingTranslatedSphereWithRay(t *testing.T) {
 	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
 	s := NewSphere()
 
-	s.transform = NewIdentityMatrix().Translate(5, 0, 0)
+	s.Transform = NewIdentityMatrix().Translate(5, 0, 0)
 	xs := s.Intersects(r)
 
 	assert.Equal(t, 0, len(xs))
@@ -159,7 +168,7 @@ func TestNormalIsNormalizedVector(t *testing.T) {
 
 func TestNormalTranslatedSphere(t *testing.T) {
 	s := NewSphere()
-	s.transform = s.transform.Translate(0, 1, 0)
+	s.Transform = s.Transform.Translate(0, 1, 0)
 	n := s.NormalAt(NewPoint(0, 1.70711, -0.70711))
 
 	EqualTuple(t, NewVector(0, 0.70711, -0.70711), n)
@@ -167,8 +176,8 @@ func TestNormalTranslatedSphere(t *testing.T) {
 
 func TestNormalTransformedSphere(t *testing.T) {
 	s := NewSphere()
-	s.transform = NewIdentityMatrix()
-	s.transform = s.transform.Scale(1, 0.5, 1).RotateZ(math.Pi / 5)
+	s.Transform = NewIdentityMatrix()
+	s.Transform = s.Transform.Scale(1, 0.5, 1).RotateZ(math.Pi / 5)
 	n := s.NormalAt(NewPoint(0, math.Sqrt2/2, -math.Sqrt2/2))
 
 	EqualTuple(t, NewVector(0, 0.97014, -0.24254), n)

@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"testing"
@@ -11,8 +11,8 @@ func TestRay(t *testing.T) {
 	direction := NewVector(4, 5, 6)
 	r := Ray{origin, direction}
 
-	assert.Equal(t, origin, r.origin)
-	assert.Equal(t, direction, r.direction)
+	assert.Equal(t, origin, r.Origin)
+	assert.Equal(t, direction, r.Direction)
 }
 
 func TestPosition(t *testing.T) {
@@ -32,8 +32,8 @@ func TestTranslateRay(t *testing.T) {
 
 	r2 := r.Transform(m)
 
-	assert.Equal(t, NewPoint(4, 6, 8), r2.origin)
-	assert.Equal(t, NewVector(0, 1, 0), r2.direction)
+	assert.Equal(t, NewPoint(4, 6, 8), r2.Origin)
+	assert.Equal(t, NewVector(0, 1, 0), r2.Direction)
 }
 
 func TestScaleRay(t *testing.T) {
@@ -42,6 +42,6 @@ func TestScaleRay(t *testing.T) {
 
 	r2 := r.Transform(m)
 
-	assert.Equal(t, NewPoint(2, 6, 12), r2.origin)
-	assert.Equal(t, NewVector(0, 3, 0), r2.direction)
+	assert.Equal(t, NewPoint(2, 6, 12), r2.Origin)
+	assert.Equal(t, NewVector(0, 3, 0), r2.Direction)
 }

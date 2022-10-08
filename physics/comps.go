@@ -1,6 +1,8 @@
-package main
+package physics
 
 import (
+	. "go-raytracer/core"
+	. "go-raytracer/geometry"
 	"math"
 )
 
@@ -22,13 +24,13 @@ type Comps struct {
 func PrepareComputations(intersection Intersection, ray Ray, xs []Intersection) Comps {
 	comps := Comps{}
 
-	comps.t = intersection.t
-	comps.object = intersection.object
+	comps.t = intersection.T
+	comps.object = intersection.Object
 
 	comps.point = ray.Position(comps.t)
-	comps.eyev = ray.direction.Multiply(-1)
+	comps.eyev = ray.Direction.Multiply(-1)
 	comps.normalv = comps.object.NormalAt(comps.point)
-	comps.reflectv = ray.direction.Reflect(comps.normalv)
+	comps.reflectv = ray.Direction.Reflect(comps.normalv)
 
 	if comps.normalv.Dot(comps.eyev) < 0 {
 		comps.inside = true
@@ -47,20 +49,20 @@ func PrepareComputations(intersection Intersection, ray Ray, xs []Intersection) 
 				comps.n1 = 1
 			} else {
 				last := len(containers) - 1
-				comps.n1 = containers[last].GetMaterial().refractiveIndex
+				comps.n1 = containers[last].GetMaterial().RefractiveIndex
 			}
 		}
 
 		find := -1
 		for index, object := range containers {
-			if object == x.object {
+			if object == x.Object {
 				find = index
 				break
 			}
 		}
 
 		if find == -1 {
-			containers = append(containers, x.object)
+			containers = append(containers, x.Object)
 		} else {
 			// remove found element
 			containers = append(containers[:find], containers[find+1:]...)
@@ -71,7 +73,7 @@ func PrepareComputations(intersection Intersection, ray Ray, xs []Intersection) 
 				comps.n2 = 1
 			} else {
 				last := len(containers) - 1
-				comps.n2 = containers[last].GetMaterial().refractiveIndex
+				comps.n2 = containers[last].GetMaterial().RefractiveIndex
 			}
 
 			break

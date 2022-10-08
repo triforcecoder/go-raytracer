@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"testing"
@@ -16,9 +16,9 @@ func EqualColor(t *testing.T, expected Color, actual Color) {
 
 func TestCreateColor(t *testing.T) {
 	color := Color{-0.5, 0.4, 1.7}
-	assert.Equal(t, -0.5, color.red)
-	assert.Equal(t, 0.4, color.green)
-	assert.Equal(t, 1.7, color.blue)
+	assert.Equal(t, -0.5, color.Red)
+	assert.Equal(t, 0.4, color.Green)
+	assert.Equal(t, 1.7, color.Blue)
 }
 
 func TestAddColor(t *testing.T) {
@@ -52,6 +52,6 @@ func TestMultiplyColor(t *testing.T) {
 }
 
 func TestConstantColors(t *testing.T) {
-	assert.Equal(t, Color{0, 0, 0}, black)
-	assert.Equal(t, Color{1, 1, 1}, white)
+	assert.Equal(t, Color{0, 0, 0}, Black)
+	assert.Equal(t, Color{1, 1, 1}, White)
 }

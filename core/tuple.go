@@ -1,12 +1,12 @@
-package main
+package core
 
 import "math"
 
 type Tuple struct {
-	x float64
-	y float64
-	z float64
-	w float64
+	X float64
+	Y float64
+	Z float64
+	W float64
 }
 
 func NewPoint(x float64, y float64, z float64) Tuple {
@@ -18,60 +18,60 @@ func NewVector(x float64, y float64, z float64) Tuple {
 }
 
 func (tuple Tuple) IsPoint() bool {
-	return tuple.w == 1
+	return tuple.W == 1
 }
 
 func (tuple Tuple) IsVector() bool {
-	return tuple.w == 0
+	return tuple.W == 0
 }
 
 func (tuple Tuple) Equals(other Tuple) bool {
-	return floatEquals(tuple.x, other.x) &&
-		floatEquals(tuple.y, other.y) &&
-		floatEquals(tuple.z, other.z) &&
-		floatEquals(tuple.w, other.w)
+	return FloatEquals(tuple.X, other.X) &&
+		FloatEquals(tuple.Y, other.Y) &&
+		FloatEquals(tuple.Z, other.Z) &&
+		FloatEquals(tuple.W, other.W)
 }
 
 func (tuple Tuple) Add(other Tuple) Tuple {
-	return Tuple{tuple.x + other.x,
-		tuple.y + other.y,
-		tuple.z + other.z,
-		tuple.w + other.w}
+	return Tuple{tuple.X + other.X,
+		tuple.Y + other.Y,
+		tuple.Z + other.Z,
+		tuple.W + other.W}
 }
 
 func (tuple Tuple) Subtract(other Tuple) Tuple {
-	return Tuple{tuple.x - other.x,
-		tuple.y - other.y,
-		tuple.z - other.z,
-		tuple.w - other.w}
+	return Tuple{tuple.X - other.X,
+		tuple.Y - other.Y,
+		tuple.Z - other.Z,
+		tuple.W - other.W}
 }
 
 func (tuple Tuple) Negate() Tuple {
-	return Tuple{tuple.x * -1,
-		tuple.y * -1,
-		tuple.z * -1,
-		tuple.w * -1}
+	return Tuple{tuple.X * -1,
+		tuple.Y * -1,
+		tuple.Z * -1,
+		tuple.W * -1}
 }
 
 func (tuple Tuple) Multiply(n float64) Tuple {
-	return Tuple{tuple.x * n,
-		tuple.y * n,
-		tuple.z * n,
-		tuple.w * n}
+	return Tuple{tuple.X * n,
+		tuple.Y * n,
+		tuple.Z * n,
+		tuple.W * n}
 }
 
 func (tuple Tuple) Divide(n float64) Tuple {
-	return Tuple{tuple.x / n,
-		tuple.y / n,
-		tuple.z / n,
-		tuple.w / n}
+	return Tuple{tuple.X / n,
+		tuple.Y / n,
+		tuple.Z / n,
+		tuple.W / n}
 }
 
 func (tuple Tuple) Magnitude() float64 {
-	return math.Sqrt(math.Pow(tuple.x, 2) +
-		math.Pow(tuple.y, 2) +
-		math.Pow(tuple.z, 2) +
-		math.Pow(tuple.w, 2))
+	return math.Sqrt(math.Pow(tuple.X, 2) +
+		math.Pow(tuple.Y, 2) +
+		math.Pow(tuple.Z, 2) +
+		math.Pow(tuple.W, 2))
 }
 
 func (tuple Tuple) Normalize() Tuple {
@@ -79,10 +79,10 @@ func (tuple Tuple) Normalize() Tuple {
 }
 
 func (tuple Tuple) Dot(other Tuple) float64 {
-	return tuple.x*other.x +
-		tuple.y*other.y +
-		tuple.z*other.z +
-		tuple.w*other.w
+	return tuple.X*other.X +
+		tuple.Y*other.Y +
+		tuple.Z*other.Z +
+		tuple.W*other.W
 }
 
 func (tuple Tuple) Cross(other Tuple) Tuple {
@@ -90,9 +90,9 @@ func (tuple Tuple) Cross(other Tuple) Tuple {
 		panic("precondition - Cross can only be used with vectors")
 	}
 
-	return NewVector(tuple.y*other.z-tuple.z*other.y,
-		tuple.z*other.x-tuple.x*other.z,
-		tuple.x*other.y-tuple.y*other.x)
+	return NewVector(tuple.Y*other.Z-tuple.Z*other.Y,
+		tuple.Z*other.X-tuple.X*other.Z,
+		tuple.X*other.Y-tuple.Y*other.X)
 }
 
 func (tuple Tuple) Reflect(normal Tuple) Tuple {
@@ -100,7 +100,7 @@ func (tuple Tuple) Reflect(normal Tuple) Tuple {
 	return tuple.Subtract(normal.Multiply(2).Multiply(tuple.Dot(normal)))
 }
 
-func floatEquals(x, y float64) bool {
+func FloatEquals(x, y float64) bool {
 	const epsilon = 0.00001
 
 	if math.Abs(x-y) < epsilon {

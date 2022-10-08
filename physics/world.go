@@ -1,27 +1,31 @@
-package main
+package physics
 
 import (
+	. "go-raytracer/core"
+	. "go-raytracer/geometry"
 	"math"
 	"sort"
 )
 
 type World struct {
-	light   *PointLight
-	objects []Shape
+	Light   *PointLight
+	Objects []Shape
 }
 
 func DefaultWorld() World {
 	s1 := NewSphere()
-	s1.material.color = Color{0.8, 1.0, 0.6}
-	s1.material.diffuse = 0.7
-	s1.material.specular = 0.2
+	material := s1.GetMaterial()
+	material.Color = NewColor(0.8, 1.0, 0.6)
+	material.Diffuse = 0.7
+	material.Specular = 0.2
+	s1.SetMaterial(material)
 	s2 := NewSphere()
-	s2.transform = s2.transform.Scale(0.5, 0.5, 0.5)
+	s2.Transform = s2.Transform.Scale(0.5, 0.5, 0.5)
 
 	world := World{}
-	world.light = &PointLight{NewPoint(-10, 10, -10), white}
-	world.objects = make([]Shape, 0)
-	world.objects = append(world.objects, s1, s2)
+	world.Light = &PointLight{NewPoint(-10, 10, -10), White}
+	world.Objects = make([]Shape, 0)
+	world.Objects = append(world.Objects, s1, s2)
 
 	return world
 }
@@ -29,7 +33,7 @@ func DefaultWorld() World {
 func (world World) Intersect(ray Ray) []Intersection {
 	intersections := make([]Intersection, 0)
 
-	for _, object := range world.objects {
+	for _, object := range world.Objects {
 		temp := object.Intersects(ray)
 
 		for _, t := range temp {
@@ -38,7 +42,7 @@ func (world World) Intersect(ray Ray) []Intersection {
 	}
 
 	sort.Slice(intersections, func(i, j int) bool {
-		if intersections[i].t < intersections[j].t {
+		if intersections[i].T < intersections[j].T {
 			return true
 		}
 
@@ -54,14 +58,14 @@ func (world World) ShadeHit(comps Comps, remaining uint) Color {
 	surface := Lighting(
 		comps.object.GetMaterial(),
 		comps.object,
-		*world.light,
+		*world.Light,
 		comps.point, comps.eyev, comps.normalv, shadowed)
 
 	reflected := world.ReflectedColor(comps, remaining)
 	refracted := world.RefractedColor(comps, remaining)
 
 	material := comps.object.GetMaterial()
-	if material.reflective > 0 && material.transparency > 0 {
+	if material.Reflective > 0 && material.Transparency > 0 {
 		reflectance := comps.Schlick()
 		return surface.Add(
 			reflected.MultiplyScalar(reflectance)).Add(
@@ -76,7 +80,7 @@ func (world World) ColorAt(ray Ray, remaining uint) Color {
 	hit, err := Hit(intersections)
 
 	if err != nil {
-		return black
+		return Black
 	}
 
 	comps := PrepareComputations(hit, ray, intersections)
@@ -84,15 +88,15 @@ func (world World) ColorAt(ray Ray, remaining uint) Color {
 }
 
 func (world World) IsShadowed(point Tuple) bool {
-	vector := world.light.position.Subtract(point)
+	vector := world.Light.position.Subtract(point)
 	distance := vector.Magnitude()
 	direction := vector.Normalize()
-	ray := Ray{point, direction}
+	ray := NewRay(point, direction)
 
 	intersection := world.Intersect(ray)
 	hit, err := Hit(intersection)
 
-	if err == nil && hit.t < distance {
+	if err == nil && hit.T < distance {
 		return true
 	}
 
@@ -100,19 +104,19 @@ func (world World) IsShadowed(point Tuple) bool {
 }
 
 func (world World) ReflectedColor(comps Comps, remaining uint) Color {
-	if remaining == 0 || comps.object.GetMaterial().reflective == 0 {
-		return black
+	if remaining == 0 || comps.object.GetMaterial().Reflective == 0 {
+		return Black
 	}
 
-	reflectRay := Ray{comps.overPoint, comps.reflectv}
+	reflectRay := NewRay(comps.overPoint, comps.reflectv)
 	color := world.ColorAt(reflectRay, remaining-1)
 
-	return color.MultiplyScalar(comps.object.GetMaterial().reflective)
+	return color.MultiplyScalar(comps.object.GetMaterial().Reflective)
 }
 
 func (world World) RefractedColor(comps Comps, remaining uint) Color {
-	if remaining == 0 || comps.object.GetMaterial().transparency == 0 {
-		return black
+	if remaining == 0 || comps.object.GetMaterial().Transparency == 0 {
+		return Black
 	}
 
 	nRatio := comps.n1 / comps.n2
@@ -121,13 +125,13 @@ func (world World) RefractedColor(comps Comps, remaining uint) Color {
 
 	if sin2T > 1 {
 		// total internal reflection
-		return black
+		return Black
 	}
 
 	cosT := math.Sqrt(1.0 - sin2T)
 	direction := comps.normalv.Multiply(nRatio*cosI - cosT).Subtract(comps.eyev.Multiply(nRatio))
-	refractRay := Ray{comps.underPoint, direction}
-	color := world.ColorAt(refractRay, remaining-1).MultiplyScalar(comps.object.GetMaterial().transparency)
+	refractRay := NewRay(comps.underPoint, direction)
+	color := world.ColorAt(refractRay, remaining-1).MultiplyScalar(comps.object.GetMaterial().Transparency)
 
 	return color
 }
