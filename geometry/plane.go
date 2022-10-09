@@ -25,8 +25,7 @@ func (plane *Plane) Intersects(ray Ray) []Intersection {
 
 	ray = ray.Transform(plane.GetInverse())
 
-	const epsilon = 0.00001
-	if math.Abs(ray.Direction.Y) < epsilon {
+	if math.Abs(ray.Direction.Y) < Epsilon {
 		return xs
 	}
 

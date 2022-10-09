@@ -20,7 +20,7 @@ func TestPlaneNormalIsConstantEverywhere(t *testing.T) {
 
 func TestIntersectWithRayParallelToPlane(t *testing.T) {
 	plane := NewPlane()
-	ray := Ray{NewPoint(0, 10, 0), NewVector(0, 0, 1)}
+	ray := NewRay(NewPoint(0, 10, 0), NewVector(0, 0, 1))
 
 	xs := plane.Intersects(ray)
 
@@ -29,7 +29,7 @@ func TestIntersectWithRayParallelToPlane(t *testing.T) {
 
 func TestIntersectWithCoplanerRay(t *testing.T) {
 	plane := NewPlane()
-	ray := Ray{NewPoint(0, 0, 0), NewVector(0, 0, 1)}
+	ray := NewRay(NewPoint(0, 0, 0), NewVector(0, 0, 1))
 
 	xs := plane.Intersects(ray)
 
@@ -38,7 +38,7 @@ func TestIntersectWithCoplanerRay(t *testing.T) {
 
 func TestRayIntersectsPlaneFromAbove(t *testing.T) {
 	plane := NewPlane()
-	ray := Ray{NewPoint(0, 1, 0), NewVector(0, -1, 0)}
+	ray := NewRay(NewPoint(0, 1, 0), NewVector(0, -1, 0))
 
 	xs := plane.Intersects(ray)
 
@@ -49,7 +49,7 @@ func TestRayIntersectsPlaneFromAbove(t *testing.T) {
 
 func TestRayIntersectsPlaneFromBelow(t *testing.T) {
 	plane := NewPlane()
-	ray := Ray{NewPoint(0, -1, 0), NewVector(0, 1, 0)}
+	ray := NewRay(NewPoint(0, -1, 0), NewVector(0, 1, 0))
 
 	xs := plane.Intersects(ray)
 

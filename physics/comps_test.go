@@ -53,7 +53,6 @@ func TestHitWhenIntersectionInside(t *testing.T) {
 }
 
 func TestHitOffsetsPoint(t *testing.T) {
-	const epsilon = 0.00001
 	ray := NewRay(NewPoint(0, 0, -5), NewVector(0, 0, 1))
 	shape := NewSphere()
 	shape.Transform = shape.Transform.Translate(0, 0, 1)
@@ -61,7 +60,7 @@ func TestHitOffsetsPoint(t *testing.T) {
 
 	comps := PrepareComputations(intersection, ray, []Intersection{})
 
-	assert.True(t, comps.overPoint.Z < -epsilon/2)
+	assert.True(t, comps.overPoint.Z < -Epsilon/2)
 	assert.True(t, comps.point.Z > comps.overPoint.Z)
 }
 
@@ -114,7 +113,6 @@ func TestN1andN2VariousIntersections(t *testing.T) {
 }
 
 func TestUnderPointOffsetBelowSurface(t *testing.T) {
-	const epsilon = 0.00001
 	ray := NewRay(NewPoint(0, 0, -5), NewVector(0, 0, 1))
 	shape := NewGlassSphere()
 	shape.Transform = shape.Transform.Translate(0, 0, 1)
@@ -123,7 +121,7 @@ func TestUnderPointOffsetBelowSurface(t *testing.T) {
 
 	comps := PrepareComputations(intersection, ray, xs)
 
-	assert.Greater(t, comps.underPoint.Z, epsilon/2)
+	assert.Greater(t, comps.underPoint.Z, Epsilon/2)
 	assert.Less(t, comps.point.Z, comps.underPoint.Z)
 }
 

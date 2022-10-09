@@ -9,6 +9,8 @@ type Tuple struct {
 	W float64
 }
 
+const Epsilon = 0.00001
+
 func NewPoint(x float64, y float64, z float64) Tuple {
 	return Tuple{x, y, z, 1}
 }
@@ -101,9 +103,7 @@ func (tuple Tuple) Reflect(normal Tuple) Tuple {
 }
 
 func FloatEquals(x, y float64) bool {
-	const epsilon = 0.00001
-
-	if math.Abs(x-y) < epsilon {
+	if math.Abs(x-y) < Epsilon {
 		return true
 	} else {
 		return false

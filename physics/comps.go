@@ -37,9 +37,8 @@ func PrepareComputations(intersection Intersection, ray Ray, xs []Intersection) 
 		comps.normalv = comps.normalv.Multiply(-1)
 	}
 
-	const epsilon = 0.00001
-	comps.overPoint = comps.point.Add(comps.normalv.Multiply(epsilon))
-	comps.underPoint = comps.point.Subtract(comps.normalv.Multiply(epsilon))
+	comps.overPoint = comps.point.Add(comps.normalv.Multiply(Epsilon))
+	comps.underPoint = comps.point.Subtract(comps.normalv.Multiply(Epsilon))
 
 	var containers []Shape
 

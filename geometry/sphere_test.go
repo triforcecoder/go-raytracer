@@ -19,7 +19,7 @@ func EqualTuple(t *testing.T, expected Tuple, actual Tuple) {
 func TestIntersectsSphereAtTwoPoints(t *testing.T) {
 	origin := NewPoint(0, 0, -5)
 	direction := NewVector(0, 0, 1)
-	r := Ray{origin, direction}
+	r := NewRay(origin, direction)
 	s := NewSphere()
 
 	xs := s.Intersects(r)
@@ -32,7 +32,7 @@ func TestIntersectsSphereAtTwoPoints(t *testing.T) {
 func TestIntersectsSphereAtTangent(t *testing.T) {
 	origin := NewPoint(0, -1, -5)
 	direction := NewVector(0, 0, 1)
-	r := Ray{origin, direction}
+	r := NewRay(origin, direction)
 	s := NewSphere()
 
 	xs := s.Intersects(r)
@@ -45,7 +45,7 @@ func TestIntersectsSphereAtTangent(t *testing.T) {
 func TestMissesSphere(t *testing.T) {
 	origin := NewPoint(0, 2, -5)
 	direction := NewVector(0, 0, 1)
-	r := Ray{origin, direction}
+	r := NewRay(origin, direction)
 	s := NewSphere()
 
 	xs := s.Intersects(r)
@@ -56,7 +56,7 @@ func TestMissesSphere(t *testing.T) {
 func TestRayOriginInsideSphere(t *testing.T) {
 	origin := NewPoint(0, 0, 0)
 	direction := NewVector(0, 0, 1)
-	r := Ray{origin, direction}
+	r := NewRay(origin, direction)
 	s := NewSphere()
 
 	xs := s.Intersects(r)
@@ -69,7 +69,7 @@ func TestRayOriginInsideSphere(t *testing.T) {
 func TestSphereBehindRay(t *testing.T) {
 	origin := NewPoint(0, 0, 5)
 	direction := NewVector(0, 0, 1)
-	r := Ray{origin, direction}
+	r := NewRay(origin, direction)
 	s := NewSphere()
 
 	xs := s.Intersects(r)
@@ -82,7 +82,7 @@ func TestSphereBehindRay(t *testing.T) {
 func TestIntersectSetsObject(t *testing.T) {
 	origin := NewPoint(0, 0, -5)
 	direction := NewVector(0, 0, 1)
-	r := Ray{origin, direction}
+	r := NewRay(origin, direction)
 	s := NewSphere()
 
 	xs := s.Intersects(r)
@@ -108,7 +108,7 @@ func TestChangeSphereTransformation(t *testing.T) {
 }
 
 func TestIntersectingScaledSphereWithRay(t *testing.T) {
-	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
+	r := NewRay(NewPoint(0, 0, -5), NewVector(0, 0, 1))
 	s := NewSphere()
 
 	s.Transform = NewIdentityMatrix().Scale(2, 2, 2)
@@ -120,7 +120,7 @@ func TestIntersectingScaledSphereWithRay(t *testing.T) {
 }
 
 func TestIntersectingTranslatedSphereWithRay(t *testing.T) {
-	r := Ray{NewPoint(0, 0, -5), NewVector(0, 0, 1)}
+	r := NewRay(NewPoint(0, 0, -5), NewVector(0, 0, 1))
 	s := NewSphere()
 
 	s.Transform = NewIdentityMatrix().Translate(5, 0, 0)
